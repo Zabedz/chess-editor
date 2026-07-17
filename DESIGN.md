@@ -62,13 +62,16 @@ wide as the board and never drifts off-centre.
 
 ### Design decision records
 
-**DDR-01: the desktop layout fits the viewport at 100% zoom without scrolling.**
+**DDR-01: the three-column tool fits the viewport at 100% zoom above the fold.**
 The reference viewport is 1280x800 (the common design fold, and the Mac default
 logical resolution). At 100% browser zoom the primary three-column view is fully
-usable there with no vertical scrollbar. The board is the height slack: it is
-capped at `calc(100vh - var(--board-v-reserve))`, so it shrinks on a shorter
-window and the column stays within the fold. This is a standing constraint on
-all future layout work:
+usable there without scrolling to reach any control. The board is the height
+slack: it is capped at `calc(100vh - var(--board-v-reserve))`, so it shrinks on
+a shorter window and the column stays within the fold. Informational page
+content (the About, How-to, and FAQ sections and the footer, which carry the
+page's crawlable text) sits below the tool and is reached by scrolling; it is
+outside `#app` so the app never renders over it. This is a standing constraint
+on all future layout work:
 
 - Secondary controls belong in a column with vertical slack, like the right
   rail. The FEN/PGN load box lives under the evaluation panel for this reason:
@@ -79,7 +82,8 @@ all future layout work:
 - The right rail (the eval panel at its tallest state plus the load box) is not
   height-capped, so it sets the page's minimum height. Keep it within the
   board-plus-reserve budget; the board scales to whatever height is left.
-- `e2e/layout.spec.ts` asserts no vertical scroll at 1280x800 and 1440x900, so a
+- `e2e/layout.spec.ts` asserts the three-column tool fits within 1280x800 and
+  1440x900 (its bottom edge and the load box both stay inside the viewport), so a
   regression fails the suite. Shorter viewports scale the board down and keep
   both side panels in view.
 

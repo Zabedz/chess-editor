@@ -1,5 +1,6 @@
 import './styles/tokens.css'
 import './styles/app.css'
+import './styles/about.css'
 import { mountShell } from './ui/shell.ts'
 import { App } from './app.ts'
 

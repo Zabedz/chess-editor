@@ -78,6 +78,18 @@ To move to a custom domain later (for example fronted by Cloudflare), set the
 domain in Settings > Pages; the deploy workflow then resolves the base to `/` for
 you.
 
+The canonical link, Open Graph tags, `sitemap.xml`, and `robots.txt` use an
+absolute site URL from `SITE_URL` (default the project page). The deploy workflow
+sets it from the Pages URL, so it follows a custom domain the same way the base
+path does. On a project page `robots.txt` sits at the subpath and browsers only
+read it from the domain root, so submit the sitemap through Search Console until
+the site serves from a root domain.
+
+The favicon, home-screen icon, and Open Graph image are `public/favicon.svg` and
+the committed PNGs in `public/`. After changing the knight mark or the share-card
+wording, regenerate the PNGs with `node scripts/gen-og-assets.mjs`, which renders
+them through the Playwright browser.
+
 ## How it works
 
 - The board is a plain CSS grid of squares with SVG pieces. Drag and drop uses

@@ -3,7 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chess Position Editor</title>
+
+    <title>Chess Position Editor - Free Online Stockfish Analysis</title>
+    <meta
+      name="description"
+      content="Set up any chess position by dragging pieces and let Stockfish 18 show the best move, score, and depth. Free, no sign-up, runs in your browser."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://__SITE__/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Chess Position Editor" />
+    <meta property="og:title" content="Chess Position Editor - Free Online Stockfish Analysis" />
+    <meta
+      property="og:description"
+      content="Set up any chess position and read Stockfish 18's best move, score, and search depth. Free and running in your browser."
+    />
+    <meta property="og:url" content="https://__SITE__/" />
+    <meta property="og:image" content="https://__SITE__/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Chess Position Editor, powered by Stockfish 18" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Chess Position Editor - Free Online Stockfish Analysis" />
+    <meta
+      name="twitter:description"
+      content="Set up any chess position and read Stockfish 18's best move, score, and search depth. Free and running in your browser."
+    />
+    <meta name="twitter:image" content="https://__SITE__/og-image.png" />
+
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#17181c" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f5f2" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <script>
       // Apply a saved theme before first paint so there is no flash. The
       // 'theme' key must match STORAGE_KEY in src/ui/theme.ts.
@@ -16,9 +52,159 @@
         // Storage can be unavailable (private mode); fall back to the OS theme.
       }
     </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Chess Position Editor",
+        "url": "https://__SITE__/",
+        "description": "Set up any chess position and let Stockfish 18 show the best move, evaluation score, and search depth. Free, no sign-up, runs in your browser.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web browser",
+        "browserRequirements": "Requires JavaScript",
+        "image": "https://__SITE__/og-image.png",
+        "screenshot": "https://__SITE__/og-image.png",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Drag-and-drop chess board editor",
+          "Stockfish 18 evaluation in the browser",
+          "Best move in algebraic and UCI notation",
+          "Load positions from FEN or PGN"
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a chess position editor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It is a tool for building a single chess position piece by piece. Use it to study an endgame, set up a puzzle, or check a spot from one of your own games."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The editor and the Stockfish engine both run in your browser at no cost, with no sign-up."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which chess engine does it use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Stockfish 18, the open-source engine, compiled to JavaScript and run as a Web Worker so the analysis happens on your own device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I analyze a position from one of my games?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Paste the FEN or PGN into the load box and the board updates to that position. The engine then evaluates from there."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does it work on phones and tablets?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The layout adapts to smaller screens, and piece editing uses touch drag and drop."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my position sent to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Everything runs locally in your browser, so your positions stay on your device."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
+
+    <section class="page-about" aria-label="About and help">
+      <div class="about-inner">
+        <section aria-labelledby="about-heading">
+          <h2 id="about-heading">About the Chess Position Editor</h2>
+          <p>
+            The Chess Position Editor is a free online tool for setting up any chess position and
+            reading the engine's verdict. Drag pieces onto the board, or paste a FEN or PGN to load a
+            game, then pick whose turn it is. Stockfish 18 evaluates the position in your browser and
+            shows the best move, the score from White's point of view, and the search depth as you
+            edit. Nothing is installed and no account is needed.
+          </p>
+        </section>
+
+        <section aria-labelledby="howto-heading">
+          <h2 id="howto-heading">How to use it</h2>
+          <ol>
+            <li>Drag pieces from the palette onto the board, or paste a FEN or PGN into the load box to set a position.</li>
+            <li>Choose White or Black to move with the turn toggle in the header.</li>
+            <li>Read Stockfish's evaluation: the score bar, the numeric score, and the best move in algebraic and UCI notation.</li>
+            <li>Press Forward to play the suggested move on the board, or Back to undo your last edit.</li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="faq-heading">
+          <h2 id="faq-heading">Frequently asked questions</h2>
+          <div class="faq">
+            <h3>What is a chess position editor?</h3>
+            <p>
+              It is a tool for building a single chess position piece by piece. Use it to study an
+              endgame, set up a puzzle, or check a spot from one of your own games.
+            </p>
+
+            <h3>Is it free to use?</h3>
+            <p>Yes. The editor and the Stockfish engine both run in your browser at no cost, with no sign-up.</p>
+
+            <h3>Which chess engine does it use?</h3>
+            <p>
+              Stockfish 18, the open-source engine, compiled to JavaScript and run as a Web Worker so
+              the analysis happens on your own device.
+            </p>
+
+            <h3>Can I analyze a position from one of my games?</h3>
+            <p>
+              Paste the FEN or PGN into the load box and the board updates to that position. The engine
+              then evaluates from there.
+            </p>
+
+            <h3>Does it work on phones and tablets?</h3>
+            <p>Yes. The layout adapts to smaller screens, and piece editing uses touch drag and drop.</p>
+
+            <h3>Is my position sent to a server?</h3>
+            <p>No. Everything runs locally in your browser, so your positions stay on your device.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <div class="about-inner">
+        <p>
+          Analysis runs on the open-source
+          <a href="https://stockfishchess.org/" rel="noopener">Stockfish</a> engine and
+          <a href="https://github.com/jhlywa/chess.js" rel="noopener">chess.js</a>.
+          <a href="https://github.com/Zabedz/chess-editor" rel="noopener">View the source on GitHub</a>.
+        </p>
+      </div>
+    </footer>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
