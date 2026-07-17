@@ -1,8 +1,10 @@
 import type { Color, Role } from '../chess/types.ts'
 
 // cburnett filenames use an uppercase role letter: wK.svg, bN.svg, and so on.
+// BASE_URL prefixes the public base so the paths hold under a non-root base as
+// well as at the root.
 export function pieceUrl(color: Color, role: Role): string {
-  return `/pieces/cburnett/${color}${role.toUpperCase()}.svg`
+  return `${import.meta.env.BASE_URL}pieces/cburnett/${color}${role.toUpperCase()}.svg`
 }
 
 const ROLE_NAME: Record<Role, string> = {

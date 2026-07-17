@@ -1,0 +1,88 @@
+name: CI
+
+# Tests run on every pull request and on pushes to main. A push to main that
+# passes the tests then builds and deploys the site to GitHub Pages.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: test-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Type-check
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: npm test
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Resolve base path
+        id: base
+        # configure-pages reports the site's path: "/chess-editor" for a project
+        # page, empty for a user page or a custom domain at the root. Vite's base
+        # must start and end with a slash, so normalise it here. This is what lets
+        # a later custom domain (for example through Cloudflare) build at the root
+        # with no code change. The output is read through env, not interpolated
+        # into the script, so it cannot be treated as shell.
+        env:
+          BASE_PATH_RAW: ${{ steps.pages.outputs.base_path }}
+        run: |
+          bp="$BASE_PATH_RAW"
+          [ -z "$bp" ] && bp='/'
+          case "$bp" in /*) ;; *) bp="/$bp" ;; esac
+          case "$bp" in */) ;; *) bp="$bp/" ;; esac
+          echo "path=$bp" >> "$GITHUB_OUTPUT"
+      - run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: ${{ steps.base.outputs.path }}
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy to Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

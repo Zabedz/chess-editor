@@ -10,7 +10,10 @@ import {
   type Score,
 } from './uci.ts'
 
-export const ENGINE_URL = '/engine/stockfish-18-lite-single.js'
+// BASE_URL prefixes the public base so the worker loads same-origin under a
+// non-root base as well as at the root; the engine finds its .wasm next to this
+// script either way.
+export const ENGINE_URL = `${import.meta.env.BASE_URL}engine/stockfish-18-lite-single.js`
 
 export interface Evaluation {
   bestMove: string | null
