@@ -22,7 +22,7 @@ body {
 .wrap {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 22px clamp(14px, 3vw, 32px) 40px;
+  padding: 22px clamp(14px, 3vw, 32px) 24px;
 }
 
 /* Header */
@@ -189,17 +189,26 @@ header {
   line-height: 1.4;
 }
 
-/* Board column */
+/* Board column. --board-size is the single source of the board's rendered
+   width, shared by the board and the toolbar so the toolbar can never be wider
+   than the board it sits under. --board-v-reserve is the vertical space the
+   page chrome takes around the board, so capping the board at 100vh minus that
+   reserve keeps the three-column view inside the viewport at 100% zoom (DDR-01).
+   The 252px is the sum of ~22 top pad + ~44 header + ~22 header margin + ~40
+   toolbar + ~54 caption + 2x ~12 gaps + 24 bottom pad, rounded up for a small
+   safety margin. Re-measure it if the header, toolbar, or caption height moves. */
 .col-board {
+  --board-v-reserve: 252px;
+  --board-size: min(100%, calc(100vh - var(--board-v-reserve)), 640px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-3);
 }
 
-/* Board toolbar: board actions in one row under the board */
+/* Board toolbar: board actions in one row spanning the full board width. */
 .board-tools {
-  width: min(100%, 640px);
+  width: var(--board-size);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -234,6 +243,16 @@ header {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
 }
 
+/* Move navigation grows to fill the row so the toolbar spans the full board
+   width, keeping the buttons centred under the board. min-width holds them at
+   their label width when the row is too tight to grow, so a narrow row wraps
+   rather than clipping the labels. */
+.tool.nav {
+  flex: 1 1 0;
+  min-width: max-content;
+  justify-content: center;
+}
+
 .tool svg {
   width: 15px;
   height: 15px;
@@ -250,7 +269,7 @@ header {
 
 .board-wrap {
   container-type: inline-size;
-  width: min(100%, 72vh, 640px);
+  width: var(--board-size);
 }
 
 .board-caption {
@@ -271,13 +290,21 @@ header {
   margin: 0;
 }
 
-/* Position loader: paste a FEN or PGN to set the board */
+/* Right column: the evaluation panel with the position loader docked beneath
+   it, so the board column stays short enough to fit the viewport at 100% zoom
+   (see DESIGN.md, DDR-01). */
+.col-eval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+/* Position loader: paste a FEN or PGN to set the board. Its own panel card
+   under the eval panel. */
 .position-loader {
-  width: min(100%, 640px);
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  margin-top: var(--sp-1);
 }
 
 .loader-label {

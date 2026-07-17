@@ -21,19 +21,23 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 |  Palette   |          Chess board          |  Evaluation      |
 |  (top)     |          8x8, coords          |  - eval bar      |
 |  (bottom)  |                               |  - score         |
-|            | [Back][Fwd] | [Clr][Rst][Flp]|  - best move     |
-|            |                               |  - depth/status  |
+|            |  [ Back ][ Forward ]|[C][R][F]|  - best move     |
+|            |            caption            |  - depth/status  |
+|            |                               +------------------+
+|            |                               |  Load a position |
+|            |                               |  [ FEN or PGN ]  |
 +------------+-------------------------------+------------------+
 ```
 
 - Left column, fixed 150 to 180px: the piece palette. The two colour groups sit
   in board order, so the colour at the bottom of the board is the lower group.
 - Centre column, flexible: the board, sized to stay square, with file letters
-  and rank numbers; a toolbar row under it (Back and Forward move navigation, a
-  divider, then Clear board, Reset, and Flip); and a load box for pasting a FEN
-  or PGN.
+  and rank numbers, and a toolbar row under it that spans the full board width
+  (Back and Forward move navigation, a divider, then Clear board, Reset, and
+  Flip).
 - Right column, fixed 300 to 340px: the evaluation panel, which also shows the
-  current FEN with a Copy button.
+  current FEN with a Copy button, and below it the load box for pasting a FEN or
+  PGN.
 
 The turn toggle sits in the header so it reads as a top-level mode that the
 evaluation follows. The eval panel repeats the current side to move as a small
@@ -43,12 +47,41 @@ label so the two never drift apart in the user's eye.
 
 - `>= 1040px`: three columns as above.
 - `640px to 1039px`: header on top, then board with its toolbar centred, then
-  the palette as a horizontal wrapping strip, then the evaluation panel full
-  width.
+  the palette as a horizontal wrapping strip, then the evaluation panel with the
+  load box beneath it, full width.
 - `< 640px`: everything stacks in one column. Board takes the full width up to
-  its max. Palette becomes a horizontal scrolling strip. Eval panel full width.
+  its max. Palette becomes a horizontal scrolling strip. Eval panel, then the
+  load box, full width.
 
-Board sizing: `min(92vw, 72vh, 640px)`, always square, centred in its column.
+Board sizing: `min(100%, calc(100vh - var(--board-v-reserve)), 640px)`, always
+square, centred in its column. The reserve (about 252px) is the vertical space
+the header, paddings, toolbar, caption, and gaps take, so the board shrinks
+before the column overflows the viewport (DDR-01). The board and the toolbar
+under it share one `--board-size` token, so the toolbar is always exactly as
+wide as the board and never drifts off-centre.
+
+### Design decision records
+
+**DDR-01: the desktop layout fits the viewport at 100% zoom without scrolling.**
+The reference viewport is 1280x800 (the common design fold, and the Mac default
+logical resolution). At 100% browser zoom the primary three-column view is fully
+usable there with no vertical scrollbar. The board is the height slack: it is
+capped at `calc(100vh - var(--board-v-reserve))`, so it shrinks on a shorter
+window and the column stays within the fold. This is a standing constraint on
+all future layout work:
+
+- Secondary controls belong in a column with vertical slack, like the right
+  rail. The FEN/PGN load box lives under the evaluation panel for this reason:
+  it stays above the fold, and the board area never has to scroll to reach a
+  control.
+- A new control placed below the board is measured against this budget first; if
+  it does not fit, it moves to a side column or behind a disclosure.
+- The right rail (the eval panel at its tallest state plus the load box) is not
+  height-capped, so it sets the page's minimum height. Keep it within the
+  board-plus-reserve budget; the board scales to whatever height is left.
+- `e2e/layout.spec.ts` asserts no vertical scroll at 1280x800 and 1440x900, so a
+  regression fails the suite. Shorter viewports scale the board down and keep
+  both side panels in view.
 
 ## Colour scheme
 
@@ -162,8 +195,11 @@ the board and palette so touch drags do not scroll the page.
 ### Board toolbar
 
 A single row directly under the board, so the board actions stay next to the
-board they act on. It has two groups split by a thin divider: move navigation
-(Back, Forward) on the left, board setup (Clear, Reset, Flip) on the right.
+board they act on. The row is exactly the board's width. It has two groups split
+by a thin divider: move navigation (Back, Forward) on the left, board setup
+(Clear, Reset, Flip) on the right. Back and Forward grow to absorb the leftover
+width, so the group spans the board edge to edge, while Clear, Reset, and Flip
+keep their natural width.
 
 - Back: undoes the last edit, whether a piece was spawned, removed, or moved.
   The turn toggle is not an edit, so it is not undone. Disabled when the history
@@ -189,8 +225,10 @@ board they act on. It has two groups split by a thin divider: move navigation
 
 ### Load a position
 
-Under the board, a labelled box takes a FEN or a PGN so a position can be set
-without dragging every piece.
+In the right column, docked under the evaluation panel as its own card, a
+labelled box takes a FEN or a PGN so a position can be set without dragging every
+piece. It sits in the right rail so the page fits the viewport at 100% zoom (see
+DDR-01).
 
 - A two-row monospace text field with the placeholder "Paste a FEN or PGN" and a
   Load button. Load also fires on Cmd/Ctrl+Enter; a plain Enter adds a newline,

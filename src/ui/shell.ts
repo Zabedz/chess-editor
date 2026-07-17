@@ -53,11 +53,11 @@ export function mountShell(root: HTMLElement): ShellRefs {
         <section class="col-board">
           <div class="board-wrap"><div class="board" id="board"></div></div>
           <div class="board-tools">
-            <button type="button" class="tool" data-action="back" title="Undo the last edit (Left arrow)" aria-label="Undo the last edit" disabled>
+            <button type="button" class="tool nav" data-action="back" title="Undo the last edit (Left arrow)" aria-label="Undo the last edit" disabled>
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5l-5 5 5 5"/></svg>
               Back
             </button>
-            <button type="button" class="tool" data-action="forward" title="Play the suggested move (Right arrow)" aria-label="Play the suggested move" disabled>
+            <button type="button" class="tool nav" data-action="forward" title="Play the suggested move (Right arrow)" aria-label="Play the suggested move" disabled>
               Forward
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
             </button>
@@ -73,7 +73,14 @@ export function mountShell(root: HTMLElement): ShellRefs {
             The engine's best move colours its <b>from</b> and <b>to</b> squares
             and the squares the piece <b>travels through</b>.
           </p>
-          <form class="position-loader" data-el="loader" novalidate>
+        </section>
+
+        <div class="col-eval">
+          <aside class="panel" id="eval" aria-labelledby="eval-heading">
+            <h2 class="panel-title" id="eval-heading">Evaluation</h2>
+            <p class="eval-idle">Place pieces to see the engine's best move.</p>
+          </aside>
+          <form class="panel position-loader" data-el="loader" novalidate>
             <label class="loader-label" for="position-input">Load a position</label>
             <textarea id="position-input" class="loader-input" rows="2" spellcheck="false" autocomplete="off" placeholder="Paste a FEN or PGN"></textarea>
             <div class="loader-row">
@@ -81,12 +88,7 @@ export function mountShell(root: HTMLElement): ShellRefs {
               <p class="loader-error" data-el="loadError" role="alert"></p>
             </div>
           </form>
-        </section>
-
-        <aside class="panel col-eval" id="eval" aria-labelledby="eval-heading">
-          <h2 class="panel-title" id="eval-heading">Evaluation</h2>
-          <p class="eval-idle">Place pieces to see the engine's best move.</p>
-        </aside>
+        </div>
       </div>
     </div>
   `
