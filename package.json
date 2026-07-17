@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:all": "vitest run && playwright test",
     "predev": "node scripts/copy-engine.mjs",
     "prebuild": "node scripts/copy-engine.mjs",
     "postinstall": "node scripts/copy-engine.mjs"
