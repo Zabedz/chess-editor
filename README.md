@@ -55,14 +55,18 @@ The Playwright browser is installed with `npx playwright install chromium`.
 ## Deployment
 
 The build is a set of static files in `dist/`, so any static host can serve
-them. `.github/workflows/ci.yml` runs the unit and end-to-end tests on every
-pull request and on pushes to `main`; a passing push to `main` then builds and
-deploys the site to GitHub Pages.
+them. Two workflows drive CI:
+
+- `.github/workflows/tests.yml` runs the type-check, unit tests, and end-to-end
+  tests on every pull request and on pushes to `main`.
+- `.github/workflows/deploy.yml` builds and deploys the site to GitHub Pages. It
+  runs only when started by hand from the Actions tab (Run workflow); pushes do
+  not deploy.
 
 The public base path is set at build time from `BASE_PATH` (default `/`), so one
 build serves from a project-page subpath or a domain root:
 
-- The Pages workflow reads the base from the site URL (`actions/configure-pages`),
+- The deploy workflow reads the base from the site URL (`actions/configure-pages`),
   so a project page builds with `/chess-editor/` while a user page or a custom
   domain at the root builds with `/`, no code change either way.
 - Local `dev` and `preview` use `/`. To preview the subpath build, run
@@ -71,7 +75,8 @@ build serves from a project-page subpath or a domain root:
 
 One-time repository setup: in Settings > Pages, set the source to GitHub Actions.
 To move to a custom domain later (for example fronted by Cloudflare), set the
-domain in Settings > Pages; the workflow then resolves the base to `/` for you.
+domain in Settings > Pages; the deploy workflow then resolves the base to `/` for
+you.
 
 ## How it works
 

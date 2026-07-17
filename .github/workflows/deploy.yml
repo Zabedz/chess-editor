@@ -1,52 +1,26 @@
-name: CI
+name: Deploy to Pages
 
-# Tests run on every pull request and on pushes to main. A push to main that
-# passes the tests then builds and deploys the site to GitHub Pages.
-
+# Manual only: start it from the Actions tab with Run workflow. Pushes never
+# deploy; the Tests workflow covers push and pull-request checks. The build
+# runs tsc, so a type error still stops a deploy.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    concurrency:
-      group: test-${{ github.ref }}
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - run: npm ci
-      - name: Type-check
-        run: npx tsc --noEmit
-      - name: Unit tests
-        run: npm test
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-      - name: End-to-end tests
-        run: npm run test:e2e
-
   deploy:
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
-    concurrency:
-      group: pages
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
