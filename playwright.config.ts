@@ -13,7 +13,9 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `vite --port ${PORT} --strictPort`,
+    // `npm run dev` triggers the predev engine copy, so the worker files are
+    // present for the engine e2e even on a freshly cleaned tree.
+    command: `npm run dev -- --port ${PORT} --strictPort`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

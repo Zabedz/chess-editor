@@ -15,3 +15,7 @@ yarn-error.log*
 .vscode/*
 .DS_Store
 /tmp
+
+# Stockfish engine files are copied from node_modules at install time.
+/public/engine/*
+!/public/engine/NOTICE.txt

@@ -9,7 +9,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "predev": "node scripts/copy-engine.mjs",
+    "prebuild": "node scripts/copy-engine.mjs",
+    "postinstall": "node scripts/copy-engine.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
@@ -19,6 +22,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "chess.js": "^1.4.0"
+    "chess.js": "^1.4.0",
+    "stockfish": "18.0.8"
   }
 }

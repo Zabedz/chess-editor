@@ -1,0 +1,12 @@
+Stockfish engine files
+
+The stockfish-18-lite-single.js and stockfish-18-lite-single.wasm files served
+from this directory are copied at install time (see scripts/copy-engine.mjs)
+from the "stockfish" npm package, Stockfish.js by Nathan Rugg
+(https://github.com/nmrugg/stockfish.js), which packages the Stockfish chess
+engine compiled to WebAssembly.
+
+Stockfish.js is (c) Chess.com, LLC and is licensed under the GNU General Public
+License v3. The full text is copied here as COPYING.txt at install time and is
+also available at https://github.com/nmrugg/stockfish.js. The files are
+redistributed unmodified.
