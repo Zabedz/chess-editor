@@ -88,4 +88,16 @@ describe('classifyPosition', () => {
     // Black rook checks the white king; it is White to move, which is legal.
     expect(classifyPosition(pieces, 'w').kind).toBe('legal')
   })
+
+  it('carries the en passant square into the legal FEN for the engine', () => {
+    const pieces = board([
+      ['e1', { color: 'w', role: 'k' }],
+      ['e8', { color: 'b', role: 'k' }],
+      ['e5', { color: 'w', role: 'p' }],
+      ['d5', { color: 'b', role: 'p' }],
+    ])
+    const status = classifyPosition(pieces, 'w', 'd6')
+    expect(status.kind).toBe('legal')
+    if (status.kind === 'legal') expect(status.fen).toContain(' w - d6 ')
+  })
 })

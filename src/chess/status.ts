@@ -15,6 +15,7 @@ export type PositionStatus =
 export function classifyPosition(
   pieces: ReadonlyMap<Square, Piece>,
   turn: Color,
+  enPassant: Square | null = null,
 ): PositionStatus {
   if (pieces.size === 0) return { kind: 'empty' }
 
@@ -34,7 +35,7 @@ export function classifyPosition(
     }
   }
 
-  const fen = toFen(pieces, turn)
+  const fen = toFen(pieces, turn, enPassant)
   const game = new Chess(fen, { skipValidation: true })
   if (game.isCheckmate()) return { kind: 'checkmate', winner: opponent }
   if (game.isStalemate()) return { kind: 'stalemate' }

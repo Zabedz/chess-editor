@@ -39,7 +39,7 @@ function wireLoader(refs: ShellRefs, model: BoardModel): void {
     }
     refs.loadError.textContent = ''
     refs.loadInput.value = ''
-    model.setPosition(result.position.pieces, result.position.turn)
+    model.setPosition(result.position.pieces, result.position.turn, result.position.enPassant)
   }
 
   refs.loadForm.addEventListener('submit', (event) => {

@@ -204,6 +204,14 @@ gesture lichess and chess.com use, so it needs no extra control. Any other king
 move, including a two-square move with no corner rook or a blocked path, stays a
 plain one-piece move, so free-form editing is unaffected.
 
+En passant is the other move with a side effect. When the editor makes a two-step
+pawn move it records the square the pawn skipped, but only when an enemy pawn
+stands ready to take it, so a move made here never leaves an en passant target in
+the FEN that cannot be used. Dragging that enemy pawn diagonally onto the skipped
+square removes the pawn beside it in the same undoable step. A pasted FEN's en
+passant field is kept as given. Because the skipped square rides in the FEN, the
+engine sees the capture and can suggest it as well.
+
 ### Board toolbar
 
 A single row directly under the board, so the board actions stay next to the
@@ -218,10 +226,11 @@ keep their natural width.
   is empty. Bound to the Left arrow key. Its label is a left chevron and Back.
 - Forward: plays the engine's suggested move, which flips the turn and starts a
   fresh search on the new position. A promotion in the suggested move lands the
-  promoted piece, and a castle (the engine emits it as the king's two-square
-  move, such as e1g1) moves the rook with the king. Disabled when there is no
-  suggested move (empty, illegal, terminal, or still searching). Bound to the
-  Right arrow key. Its label is Forward and a right chevron.
+  promoted piece, a castle (the engine emits it as the king's two-square move,
+  such as e1g1) moves the rook with the king, and an en passant capture (a pawn's
+  diagonal move onto the empty skipped square) removes the passed pawn. Disabled
+  when there is no suggested move (empty, illegal, terminal, or still searching).
+  Bound to the Right arrow key. Its label is Forward and a right chevron.
 - Clear board: empties every square. The eval panel then shows an idle empty
   state.
 - Reset: restores the standard starting position and sets the turn to White.
@@ -246,10 +255,10 @@ DDR-01).
 - A two-row monospace text field with the placeholder "Paste a FEN or PGN" and a
   Load button. Load also fires on Cmd/Ctrl+Enter; a plain Enter adds a newline,
   so a multi-line PGN can be pasted or typed.
-- A FEN is recognised by the slashes in its first field and read for placement
-  and side to move. Anything else is played out as a PGN to its final position.
-  Castling and en passant are dropped, matching how the editor serialises its
-  own FEN.
+- A FEN is recognised by the slashes in its first field and read for placement,
+  side to move, and the en passant square. Anything else is played out as a PGN
+  to its final position. Castling rights are re-derived from the piece placement,
+  matching how the editor serialises its own FEN.
 - A load replaces the whole position and is a normal edit, so Back undoes it.
 - Invalid input leaves the board untouched and shows an inline error that names
   the problem (for example, the side to move is not w or b). The error clears on

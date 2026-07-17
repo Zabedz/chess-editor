@@ -171,7 +171,7 @@ export class App {
     this.setBestMove(null)
 
     const turn = this.model.getTurn()
-    const status = classifyPosition(this.model.getPieces(), turn)
+    const status = classifyPosition(this.model.getPieces(), turn, this.model.getEnPassant())
 
     switch (status.kind) {
       case 'empty':

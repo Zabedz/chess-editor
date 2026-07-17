@@ -107,4 +107,14 @@ describe('toFen', () => {
     ])
     expect(toFen(pieces, 'b')).toBe('4k3/8/8/8/8/8/8/4K3 b - - 0 1')
   })
+
+  it('writes the en passant square when one is given', () => {
+    const pieces = board([
+      ['e1', { color: 'w', role: 'k' }],
+      ['e8', { color: 'b', role: 'k' }],
+      ['d5', { color: 'b', role: 'p' }],
+      ['e5', { color: 'w', role: 'p' }],
+    ])
+    expect(toFen(pieces, 'w', 'd6')).toBe('4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1')
+  })
 })

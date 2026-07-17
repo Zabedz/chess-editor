@@ -65,7 +65,7 @@ export function boardFromPlacement(placement: string): Map<Square, Piece> {
 }
 
 /** Infers castling rights from king and rook home squares (the editor cannot
-    know rights otherwise; en passant is always cleared). */
+    know rights otherwise). */
 export function inferCastling(pieces: ReadonlyMap<Square, Piece>): string {
   let rights = ''
   if (isPiece(pieces.get('e1'), 'w', 'k')) {
@@ -79,10 +79,15 @@ export function inferCastling(pieces: ReadonlyMap<Square, Piece>): string {
   return rights === '' ? '-' : rights
 }
 
-/** Assembles a full FEN. En passant is cleared and the move clocks are fixed,
-    since an edited position carries no move history. */
-export function toFen(pieces: ReadonlyMap<Square, Piece>, turn: Color): string {
-  return `${placementFromBoard(pieces)} ${turn} ${inferCastling(pieces)} - 0 1`
+/** Assembles a full FEN. The move clocks are fixed, since an edited position
+    carries no history; the en passant target is the square a pawn just skipped
+    on a two-step move, or null (written as "-") when there is none. */
+export function toFen(
+  pieces: ReadonlyMap<Square, Piece>,
+  turn: Color,
+  enPassant: Square | null = null,
+): string {
+  return `${placementFromBoard(pieces)} ${turn} ${inferCastling(pieces)} ${enPassant ?? '-'} 0 1`
 }
 
 function isPiece(

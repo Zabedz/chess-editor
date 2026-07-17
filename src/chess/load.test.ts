@@ -79,4 +79,20 @@ describe('loadPosition', () => {
     expect(result.ok).toBe(false)
     if (!result.ok) expect(result.error).toContain('Enter a FEN or PGN')
   })
+
+  it('reads the en passant square from a FEN', () => {
+    expect(loaded('4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1').enPassant).toBe('d6')
+  })
+
+  it('leaves en passant null when the FEN has none', () => {
+    expect(loaded('4k3/8/8/8/8/8/8/4K3 b - - 0 1').enPassant).toBeNull()
+  })
+
+  it('drops a malformed en passant field', () => {
+    expect(loaded('4k3/8/8/8/8/8/8/4K3 w - z9 0 1').enPassant).toBeNull()
+  })
+
+  it('reads the en passant square from a PGN double push', () => {
+    expect(loaded('1. e4 d5 2. e5 f5').enPassant).toBe('f6')
+  })
 })
