@@ -8,6 +8,7 @@ import type { Color, Square } from './chess/types.ts'
 import { StockfishEngine } from './engine/stockfish.ts'
 import { EvalPanel } from './ui/evalPanel.ts'
 import { wireControls } from './ui/controls.ts'
+import { wireTheme } from './ui/theme.ts'
 import type { ShellRefs } from './ui/shell.ts'
 
 // Wait this long after the last edit before asking the engine, so a burst of
@@ -39,6 +40,7 @@ export class App {
     drag.attach()
     mountPalette(refs.palette, drag)
     wireControls(refs, this.model)
+    wireTheme(refs.themeButton)
 
     this.panel.render({ kind: 'loading' })
     this.model.subscribe(() => this.recompute())

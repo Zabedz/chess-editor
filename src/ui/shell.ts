@@ -9,6 +9,7 @@ export interface ShellRefs {
   turnButtons: HTMLButtonElement[]
   clearButton: HTMLButtonElement
   resetButton: HTMLButtonElement
+  themeButton: HTMLButtonElement
 }
 
 export function mountShell(root: HTMLElement): ShellRefs {
@@ -19,13 +20,16 @@ export function mountShell(root: HTMLElement): ShellRefs {
           <h1>Chess Position Editor</h1>
           <span class="sub">Stockfish 18</span>
         </div>
-        <div class="turn" role="group" aria-label="Side to move">
-          <button type="button" data-turn="w" data-color="w" aria-pressed="true">
-            <span class="dot"></span>White to move
-          </button>
-          <button type="button" data-turn="b" data-color="b" aria-pressed="false">
-            <span class="dot"></span>Black to move
-          </button>
+        <div class="header-right">
+          <div class="turn" role="group" aria-label="Side to move">
+            <button type="button" data-turn="w" data-color="w" aria-pressed="true">
+              <span class="dot"></span>White to move
+            </button>
+            <button type="button" data-turn="b" data-color="b" aria-pressed="false">
+              <span class="dot"></span>Black to move
+            </button>
+          </div>
+          <button type="button" class="icon-btn" data-theme-toggle>Dark</button>
         </div>
       </header>
 
@@ -65,6 +69,7 @@ export function mountShell(root: HTMLElement): ShellRefs {
     ],
     clearButton: must(root.querySelector('button[data-action="clear"]'), 'clear button'),
     resetButton: must(root.querySelector('button[data-action="reset"]'), 'reset button'),
+    themeButton: must(root.querySelector('button[data-theme-toggle]'), 'theme button'),
   }
 }
 

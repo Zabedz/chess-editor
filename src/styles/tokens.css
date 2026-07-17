@@ -50,8 +50,12 @@
   --r-lg: 14px;
 }
 
+/* Light values apply when the OS prefers light and the user has not chosen a
+   theme, or when the user explicitly picks light. A manual `data-theme` always
+   wins over the OS preference; `data-theme="dark"` falls back to the base
+   :root above, so only the light set is repeated. */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #f4f5f2;
     --surface: #ffffff;
     --surface-2: #ecede8;
@@ -66,4 +70,20 @@
     --mate: #b8860b;
     --shadow: rgba(20, 22, 18, 0.10);
   }
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --surface-2: #ecede8;
+  --surface-3: #e1e2db;
+  --border: #d8dad1;
+  --text: #23241f;
+  --muted: #6b6d66;
+  --accent: #3d6fa6;
+  --on-accent: #ffffff;
+  --good: #2e8b57;
+  --bad: #c4483b;
+  --mate: #b8860b;
+  --shadow: rgba(20, 22, 18, 0.10);
 }
