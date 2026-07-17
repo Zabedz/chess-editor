@@ -63,8 +63,9 @@ App chrome:
 | `--surface-3`      | `#34353D`  | button hover                         |
 | `--border`         | `#33343B`  | hairlines, panel edges               |
 | `--text`           | `#ECECEE`  | primary text                         |
-| `--text-muted`     | `#9A9BA3`  | secondary text, coordinates          |
+| `--muted`          | `#9A9BA3`  | secondary text, coordinates          |
 | `--accent`         | `#7FB2F0`  | focus rings, links, active toggle    |
+| `--on-accent`      | `#17181C`  | text on an accent fill (flips light) |
 
 Board squares (a familiar green board):
 
@@ -101,8 +102,12 @@ Evaluation sentiment:
 - UI text: `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`.
 - Numeric and code (score, FEN, UCI move): `ui-monospace, "SF Mono", Menlo,
   monospace`.
-- Scale: header 20px/600, panel titles 13px/600 uppercase with 0.04em tracking,
-  body 14px, coordinates 10px, eval score 34px/700 mono, best move 18px mono.
+- Scale: header 20px/650, panel eyebrow titles 11px/650 uppercase with 0.07em
+  tracking, body 14px, coordinates 10px, eval score 34px/700 mono, best move
+  18px mono.
+- The base `:root` palette is the dark set above; the light values apply under
+  `prefers-color-scheme: light`. Text on an accent fill uses `--on-accent`,
+  which flips so contrast stays readable in both themes.
 
 ## Component detail
 
