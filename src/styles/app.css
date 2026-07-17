@@ -76,6 +76,19 @@ header {
   background: var(--surface-3);
 }
 
+.icon-btn.icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+}
+
+.icon-btn.icon-only svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
 /* Turn toggle */
 .turn {
   display: inline-flex;

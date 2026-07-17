@@ -88,3 +88,26 @@
   --mate: #b8860b;
   --shadow: rgba(20, 22, 18, 0.10);
 }
+
+/* Board colour themes. Green is the base :root above; the others swap the two
+   square colours and the on-square coordinate colours. */
+:root[data-board="blue"] {
+  --sq-light: #dee3e6;
+  --sq-dark: #4b7399;
+  --coord-on-light: #4b7399;
+  --coord-on-dark: #dee3e6;
+}
+
+:root[data-board="slate"] {
+  --sq-light: #dcdde0;
+  --sq-dark: #58606b;
+  --coord-on-light: #58606b;
+  --coord-on-dark: #dcdde0;
+}
+
+:root[data-board="brown"] {
+  --sq-light: #f0d9b5;
+  --sq-dark: #b58863;
+  --coord-on-light: #b58863;
+  --coord-on-dark: #f0d9b5;
+}

@@ -180,8 +180,9 @@ board they act on. It has two groups split by a thin divider: move navigation
   a view control, so it leaves the position, the side to move, and the FEN
   untouched. Also bound to the `f` key when focus is not in a text field. Its
   label pairs a small vertical two-way arrow icon with the word Flip.
-- The keyboard shortcuts (Left, Right, `f`) fire only on a bare key press, so
-  browser and text-field shortcuts keep working.
+- The keyboard shortcuts (Left, Right, `f` by default) fire only on a bare key
+  press, so browser and text-field shortcuts keep working. All four are
+  rebindable in the settings panel.
 - All are `--surface-2` buttons with a visible focus ring and hover to
   `--surface-3`. A disabled button drops to 40% opacity. Reset carries a
   slightly stronger outline since it is the common return action.
@@ -246,6 +247,30 @@ Panel states:
 - No legal move: Checkmate or Stalemate, with no best move.
 - Empty board: an idle prompt to place pieces.
 - Engine error: a plain failure line if the engine cannot load.
+
+### Settings
+
+A cogwheel in the header opens a modal settings dialog (a native `<dialog>`,
+closed by Escape, the close icon, Done, or a click on the backdrop). It uses the
+app's chrome, with grouped sections, toggle switches, sliders, and a footer that
+carries Restore defaults and Done. Every change applies at once and saves to
+localStorage, so the choices survive a reload.
+
+- Sound: a Sound effects toggle and a Volume slider. Move and capture clicks are
+  synthesised with the Web Audio API (a short triangle blip with a fast decay,
+  lower for a capture), so the app ships no audio files. The context is created
+  on the first play, inside a user gesture, to satisfy the autoplay policy.
+- Board: four colour themes (Green, Blue, Slate, Brown) shown as mini checker
+  swatches; a theme swaps the two square colours through CSS variables. Show
+  coordinates and Show move highlight are visibility toggles driven by a root
+  data attribute.
+- Engine: a Search depth slider from 6 to 22 (default 15) that feeds the
+  Stockfish search. Changing it re-runs the current search.
+- Keyboard shortcuts: a row per action (Undo, Play best, Flip, Reset) showing the
+  current key with a Change button. Change starts recording; the next key press
+  binds it, and a key already used by another action is refused with a note.
+  While the dialog is open the board shortcuts are inert, so a rebind is captured
+  cleanly.
 
 ## Motion
 

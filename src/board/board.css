@@ -90,3 +90,13 @@
   opacity: 1;
   box-shadow: inset 0 0 0 max(3px, 0.7cqi) var(--to-ring);
 }
+
+/* Visual toggles from the settings panel. Both selectors outrank the rules
+   above, so the overlay and coordinates hide without !important. */
+:root[data-coords="off"] .square .coord {
+  display: none;
+}
+
+:root[data-highlight="off"] .square::after {
+  display: none;
+}

@@ -8,7 +8,11 @@ import { pathBetween } from './chess/geometry.ts'
 import { sanForMove } from './chess/notation.ts'
 import type { Color, Role, Square } from './chess/types.ts'
 import { StockfishEngine } from './engine/stockfish.ts'
+import { Sounds } from './audio/sounds.ts'
+import { SettingsStore, normalizeKey, type Settings } from './settings/settings.ts'
 import { EvalPanel } from './ui/evalPanel.ts'
+import { SettingsPanel } from './ui/settingsPanel.ts'
+import { applyVisuals } from './ui/visuals.ts'
 import { wireControls } from './ui/controls.ts'
 import { wireTheme } from './ui/theme.ts'
 import type { ShellRefs } from './ui/shell.ts'
@@ -26,9 +30,16 @@ export class App {
   private readonly palette: Palette
   private readonly panel: EvalPanel
   private readonly engine: StockfishEngine
+  private readonly settings: SettingsStore
+  private readonly sounds: Sounds
+  private readonly settingsPanel: SettingsPanel
   private readonly back: HTMLButtonElement
   private readonly forward: HTMLButtonElement
   private orientation: Orientation = 'white'
+
+  // Last depth handed to the engine, so a settings change re-searches only when
+  // the depth actually moved.
+  private depth: number
 
   // The engine's current best move, or null when there is none to play. Back
   // undoes the last edit; Forward plays this move.
@@ -46,11 +57,21 @@ export class App {
     this.panel = new EvalPanel(refs.evalPanel)
     this.engine = new StockfishEngine()
 
+    this.settings = new SettingsStore()
+    const initial = this.settings.get()
+    this.depth = initial.depth
+    this.sounds = new Sounds(initial)
+    applyVisuals(initial)
+
     const drag = new DragController(this.model, refs.board)
     drag.attach()
     this.palette = new Palette(refs.palette, drag)
     wireControls(refs, this.model)
     wireTheme(refs.themeButton)
+
+    this.settingsPanel = new SettingsPanel(this.settings)
+    refs.settingsButton.addEventListener('click', () => this.settingsPanel.open())
+    this.settings.subscribe((settings) => this.applySettings(settings))
 
     this.back = refs.backButton
     this.forward = refs.forwardButton
@@ -61,6 +82,12 @@ export class App {
 
     this.panel.render({ kind: 'loading' })
     this.syncNav()
+    this.model.subscribe((change) => {
+      if (change.kind === 'move') {
+        if (change.capture) this.sounds.capture()
+        else this.sounds.move()
+      }
+    })
     this.model.subscribe(() => this.recompute())
 
     this.engine.whenReady().then(
@@ -85,17 +112,34 @@ export class App {
   }
 
   private onKey(event: KeyboardEvent): void {
-    // Bare keys only, and not while typing, so browser and text-field shortcuts
-    // keep working.
+    // Inert while the settings dialog captures keys, and bare keys only, so
+    // rebinding, browser, and text-field shortcuts keep working.
+    if (this.settingsPanel.isOpen()) return
     if (event.ctrlKey || event.metaKey || event.altKey || isTyping(event.target)) return
-    if (event.key.toLowerCase() === 'f') {
+
+    const keys = this.settings.get().keys
+    const key = normalizeKey(event.key)
+    if (key === keys.flip) {
+      event.preventDefault()
       this.flip()
-    } else if (event.key === 'ArrowLeft' && this.model.canUndo()) {
+    } else if (key === keys.back && this.model.canUndo()) {
       event.preventDefault()
       this.model.undo()
-    } else if (event.key === 'ArrowRight' && this.bestMove) {
+    } else if (key === keys.forward && this.bestMove) {
       event.preventDefault()
       this.playBest()
+    } else if (key === keys.reset) {
+      event.preventDefault()
+      this.model.reset()
+    }
+  }
+
+  private applySettings(settings: Settings): void {
+    this.sounds.update(settings)
+    applyVisuals(settings)
+    if (settings.depth !== this.depth) {
+      this.depth = settings.depth
+      this.recompute()
     }
   }
 
@@ -168,6 +212,7 @@ export class App {
     if (token !== this.token) return
     this.engine
       .evaluate(fen, {
+        depth: this.settings.get().depth,
         onInfo: (progress) => {
           if (token === this.token) this.panel.render({ kind: 'thinking', turn, progress })
         },
