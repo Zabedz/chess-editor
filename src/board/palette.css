@@ -1,0 +1,63 @@
+.palette-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.pgroup-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 var(--sp-2);
+  letter-spacing: 0.02em;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+}
+
+.swatch {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: grab;
+  touch-action: none;
+  transition: background 0.12s, transform 0.06s;
+}
+
+.swatch:hover {
+  background: var(--surface-3);
+}
+
+.swatch:active {
+  cursor: grabbing;
+  transform: scale(0.96);
+}
+
+.swatch img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* Below the three-column breakpoint the two groups sit side by side. */
+@media (max-width: 1039px) {
+  .palette-groups {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+  }
+
+  .palette-group {
+    flex: 1;
+    min-width: 160px;
+  }
+}

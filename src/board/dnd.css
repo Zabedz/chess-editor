@@ -1,0 +1,14 @@
+.drag-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+}
+
+/* The lifted piece stays faintly in place while its ghost follows the pointer. */
+.square.dragging .piece {
+  opacity: 0.3;
+}
