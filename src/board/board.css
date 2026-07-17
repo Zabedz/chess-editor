@@ -1,0 +1,87 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.square {
+  position: relative;
+}
+
+.square.light {
+  background: var(--sq-light);
+}
+
+.square.dark {
+  background: var(--sq-dark);
+}
+
+.square .coord {
+  position: absolute;
+  z-index: 3;
+  font-family: var(--font-mono);
+  font-size: 2.1cqi;
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.square .coord.file {
+  right: 5%;
+  bottom: 4%;
+}
+
+.square .coord.rank {
+  left: 5%;
+  top: 4%;
+}
+
+.square.light .coord {
+  color: var(--coord-on-light);
+}
+
+.square.dark .coord {
+  color: var(--coord-on-dark);
+}
+
+.square .piece {
+  position: absolute;
+  z-index: 2;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* Suggested-move highlight overlay, painted above the square and below pieces. */
+.square::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.square.hl-from::after {
+  background: var(--from-fill);
+  opacity: 1;
+}
+
+.square.hl-to::after {
+  background: var(--to-fill);
+  opacity: 1;
+  box-shadow: inset 0 0 0 max(3px, 0.7cqi) var(--to-ring);
+}

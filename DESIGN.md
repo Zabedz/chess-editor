@@ -121,8 +121,8 @@ Evaluation sentiment:
   and low weight so they sit under the pieces.
 - Pieces are SVG images centred in the square at about 90% of the square size.
 - Highlight is a full-square overlay via a `::after` pseudo-element toggled with
-  `.square--from` and `.square--to` classes. The overlay never blocks pointer
-  events.
+  `.square.hl-from` and `.square.hl-to` classes. The overlay never blocks
+  pointer events.
 
 ### Piece palette
 

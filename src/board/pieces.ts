@@ -4,3 +4,17 @@ import type { Color, Role } from '../chess/types.ts'
 export function pieceUrl(color: Color, role: Role): string {
   return `/pieces/cburnett/${color}${role.toUpperCase()}.svg`
 }
+
+const ROLE_NAME: Record<Role, string> = {
+  k: 'king',
+  q: 'queen',
+  r: 'rook',
+  b: 'bishop',
+  n: 'knight',
+  p: 'pawn',
+}
+
+/** A spoken label such as "white king", for image alt text and aria labels. */
+export function pieceLabel(color: Color, role: Role): string {
+  return `${color === 'w' ? 'white' : 'black'} ${ROLE_NAME[role]}`
+}
