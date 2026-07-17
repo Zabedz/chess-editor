@@ -57,3 +57,21 @@ test('reports an illegal position and does not highlight', async ({ page }) => {
   await expect(page.locator('.eval-message')).toContainText('Black has no king')
   await expect(page.locator('.board .square.hl-to')).toHaveCount(0)
 })
+
+test('reports checkmate as a terminal state with no best move', async ({ page }) => {
+  await page.getByRole('button', { name: 'Clear board' }).click()
+
+  // Build a minimal mate: black king a8, white queen a7, white king b6, Black to move.
+  const place = async (piece: string, square: string) => {
+    await dragTo(page, page.getByRole('button', { name: piece }), await center(page.locator(`[data-square="${square}"]`)))
+  }
+  await place('black king', 'a8')
+  await place('white queen', 'a7')
+  await place('white king', 'b6')
+  await page.getByRole('button', { name: 'Black to move' }).click()
+
+  await expect(page.locator('.eval-status')).toHaveAttribute('data-tone', 'terminal')
+  await expect(page.locator('.eval-message')).toContainText('Checkmate')
+  await expect(page.locator('.eval-message')).toContainText('White wins')
+  await expect(page.locator('.board .square.hl-to')).toHaveCount(0)
+})

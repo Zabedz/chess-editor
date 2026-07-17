@@ -21,6 +21,22 @@ test('loads Stockfish and evaluates the starting position', async ({ page }) => 
   expect(result.text).toMatch(/^[+-]?\d/)
 })
 
+test('rejects whenReady when the engine file is missing', async ({ page }) => {
+  test.setTimeout(30_000)
+  await page.goto('/')
+
+  const outcome = await page.evaluate(async () => {
+    const mod = await import('/src/engine/stockfish.ts')
+    const engine = new mod.StockfishEngine('/engine/does-not-exist.js')
+    return engine.whenReady().then(
+      () => 'resolved',
+      () => 'rejected',
+    )
+  })
+
+  expect(outcome).toBe('rejected')
+})
+
 test('rejects a pending search when the engine is terminated', async ({ page }) => {
   test.setTimeout(45_000)
   await page.goto('/')

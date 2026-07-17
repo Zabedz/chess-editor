@@ -85,6 +85,11 @@ export class StockfishEngine {
     return this.state
   }
 
+  /** False once the worker has failed to load, crashed, or been terminated. */
+  isAlive(): boolean {
+    return !this.dead
+  }
+
   whenReady(): Promise<void> {
     return this.ready
   }
@@ -95,7 +100,7 @@ export class StockfishEngine {
       key results to the FEN it requested. Rejects if the engine failed to load
       or was terminated during the search. */
   evaluate(fen: string, options: EvaluateOptions = {}): Promise<Evaluation> {
-    if (this.searching) this.send('stop')
+    this.stop()
     const run = (): Promise<Evaluation> => this.runSearch(fen, options)
     const next = this.chain.then(() => this.ready).then(run)
     this.chain = next.then(
@@ -103,6 +108,12 @@ export class StockfishEngine {
       () => undefined,
     )
     return next
+  }
+
+  /** Halts a running search. The in-flight evaluate() still resolves with the
+      best line found so far, which the caller discards by token. */
+  stop(): void {
+    if (this.searching) this.send('stop')
   }
 
   terminate(): void {

@@ -71,6 +71,21 @@ describe('EvalPanel', () => {
     expect(tone(root)).toBe('illegal')
   })
 
+  it('names the winner on checkmate', () => {
+    const { root, panel } = mount()
+    panel.render({ kind: 'checkmate', winner: 'w', turn: 'b' })
+    expect(el(root, 'message').textContent).toContain('White wins')
+    expect(el(root, 'detail').hidden).toBe(true)
+    expect(tone(root)).toBe('terminal')
+  })
+
+  it('reports a draw on stalemate', () => {
+    const { root, panel } = mount()
+    panel.render({ kind: 'stalemate', turn: 'b' })
+    expect(el(root, 'message').textContent).toContain('drawn')
+    expect(tone(root)).toBe('terminal')
+  })
+
   it('toggles the FEN row with setFen', () => {
     const { root, panel } = mount()
     panel.setFen('4k3/8/8/8/8/8/8/4K3 w - - 0 1')

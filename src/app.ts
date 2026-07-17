@@ -28,7 +28,6 @@ export class App {
   private token = 0
   private timer: ReturnType<typeof setTimeout> | undefined
   private engineReady = false
-  private engineFailed = false
 
   constructor(refs: ShellRefs) {
     this.model = new BoardModel()
@@ -50,7 +49,8 @@ export class App {
         this.recompute()
       },
       () => {
-        this.engineFailed = true
+        // Boot failed; the engine is now marked dead, so recompute renders the
+        // error state for a legal position.
         this.recompute()
       },
     )
@@ -59,6 +59,7 @@ export class App {
   private recompute(): void {
     this.token++
     clearTimeout(this.timer)
+    this.engine.stop()
     this.view.clearHighlight()
 
     const turn = this.model.getTurn()
@@ -83,7 +84,7 @@ export class App {
         return
       case 'legal':
         this.panel.setFen(status.fen)
-        if (this.engineFailed) {
+        if (!this.engine.isAlive()) {
           this.panel.render({ kind: 'error' })
           return
         }
@@ -119,7 +120,9 @@ export class App {
         }
       })
       .catch(() => {
-        if (token === this.token) this.panel.render({ kind: 'error' })
+        // A rejected search means the worker died; recompute reads the engine's
+        // liveness and renders the error state.
+        this.recompute()
       })
   }
 }
