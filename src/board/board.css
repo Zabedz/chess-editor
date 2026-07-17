@@ -80,6 +80,11 @@
   opacity: 1;
 }
 
+.square.hl-path::after {
+  background: var(--path-fill);
+  opacity: 1;
+}
+
 .square.hl-to::after {
   background: var(--to-fill);
   opacity: 1;

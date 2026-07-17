@@ -6,6 +6,7 @@ import './board.css'
 export interface Highlight {
   from: Square | null
   to: Square | null
+  path: readonly Square[]
 }
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const
@@ -30,11 +31,12 @@ export class BoardView {
     for (const [square, el] of this.squares) {
       el.classList.toggle('hl-from', square === highlight.from)
       el.classList.toggle('hl-to', square === highlight.to)
+      el.classList.toggle('hl-path', highlight.path.includes(square))
     }
   }
 
   clearHighlight(): void {
-    this.setHighlight({ from: null, to: null })
+    this.setHighlight({ from: null, to: null, path: [] })
   }
 
   private buildGrid(): void {
@@ -57,7 +59,7 @@ export class BoardView {
   }
 
   // Must not touch a square's classList: the suggested-move highlight lives
-  // there (hl-from / hl-to) and has to survive piece re-renders.
+  // there (hl-from / hl-path / hl-to) and has to survive piece re-renders.
   private renderPieces(): void {
     for (const [square, el] of this.squares) {
       const piece = this.model.get(square)

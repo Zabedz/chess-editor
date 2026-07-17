@@ -3,6 +3,7 @@ import { BoardView } from './board/view.ts'
 import { DragController } from './board/dnd.ts'
 import { mountPalette } from './board/palette.ts'
 import { classifyPosition } from './chess/status.ts'
+import { pathBetween } from './chess/geometry.ts'
 import { sanForMove } from './chess/notation.ts'
 import type { Color, Square } from './chess/types.ts'
 import { StockfishEngine } from './engine/stockfish.ts'
@@ -115,10 +116,9 @@ export class App {
         const san = evaluation.bestMove ? sanForMove(fen, evaluation.bestMove) : null
         this.panel.render({ kind: 'ready', turn, evaluation, san })
         if (evaluation.bestMove) {
-          this.view.setHighlight({
-            from: evaluation.bestMove.slice(0, 2) as Square,
-            to: evaluation.bestMove.slice(2, 4) as Square,
-          })
+          const from = evaluation.bestMove.slice(0, 2) as Square
+          const to = evaluation.bestMove.slice(2, 4) as Square
+          this.view.setHighlight({ from, to, path: pathBetween(from, to) })
         }
       })
       .catch(() => {

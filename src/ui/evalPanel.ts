@@ -45,6 +45,7 @@ export class EvalPanel {
         </div>
         <div class="legend">
           <div class="legend-item"><span class="chip chip-from"></span>Move from</div>
+          <div class="legend-item"><span class="chip chip-path"></span>Travels through</div>
           <div class="legend-item"><span class="chip chip-to"></span>Move to</div>
         </div>
       </div>

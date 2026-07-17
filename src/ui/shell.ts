@@ -46,8 +46,8 @@ export function mountShell(root: HTMLElement): ShellRefs {
         <section class="col-board">
           <div class="board-wrap"><div class="board" id="board"></div></div>
           <p class="board-caption">
-            The engine's best move is shown by colouring its <b>from</b> and
-            <b>to</b> squares.
+            The engine's best move colours its <b>from</b> and <b>to</b> squares
+            and the squares the piece <b>travels through</b>.
           </p>
         </section>
 

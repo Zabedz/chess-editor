@@ -24,6 +24,7 @@
   --coord-on-light: #769656;
   --coord-on-dark: #eeeed2;
   --from-fill: rgba(255, 204, 77, 0.55);
+  --path-fill: rgba(90, 200, 120, 0.24);
   --to-fill: rgba(90, 200, 120, 0.62);
   --to-ring: rgba(46, 160, 87, 0.95);
   --piece-w: #f7f7f2;

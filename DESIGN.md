@@ -81,11 +81,16 @@ Suggested-move highlight (the core feature, tile colouring):
 | Token              | Value                       | Use                     |
 |--------------------|-----------------------------|-------------------------|
 | `--from-fill`      | `rgba(255, 204, 77, 0.55)`  | origin square overlay   |
+| `--path-fill`      | `rgba(90, 200, 120, 0.24)`  | squares travelled through |
 | `--to-fill`        | `rgba(90, 200, 120, 0.62)`  | destination square      |
 | `--to-ring`        | `rgba(46, 160, 87, 0.95)`   | inset ring on target    |
 
 Origin is amber, destination is green with an inset ring, so from and to read as
-distinct at a glance and stay legible over both light and dark squares.
+distinct at a glance and stay legible over both light and dark squares. For a
+sliding move (rook, bishop, queen) the squares the piece passes over are tinted
+the destination hue at about a third of its opacity, a faint trail from origin
+to destination. Knights and single-step moves have no travel squares. The from,
+path, and to squares never overlap, so each keeps one colour.
 
 Evaluation sentiment:
 
