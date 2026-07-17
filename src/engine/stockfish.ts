@@ -12,8 +12,6 @@ import {
 
 export const ENGINE_URL = '/engine/stockfish-18-lite-single.js'
 
-export type EngineState = 'loading' | 'ready' | 'thinking' | 'error'
-
 export interface Evaluation {
   bestMove: string | null
   ponder: string | null
@@ -58,7 +56,6 @@ export class StockfishEngine {
   private activeSearch: ActiveSearch | null = null
   private searching = false
   private dead = false
-  private state: EngineState = 'loading'
 
   constructor(url: string = ENGINE_URL) {
     this.worker = new Worker(url)
@@ -72,17 +69,12 @@ export class StockfishEngine {
     this.ready = new Promise((resolve, reject) => {
       this.worker.addEventListener('error', (event) => {
         this.dead = true
-        this.state = 'error'
         const error = new Error(`Stockfish worker error (${event.message || url})`)
         reject(error)
         this.failActiveSearch(error)
       })
       void this.boot().then(resolve, reject)
     })
-  }
-
-  getState(): EngineState {
-    return this.state
   }
 
   /** False once the worker has failed to load, crashed, or been terminated. */
@@ -129,7 +121,6 @@ export class StockfishEngine {
     this.send('ucinewgame')
     this.send('isready')
     await this.waitFor((line) => line === 'readyok')
-    this.state = 'ready'
   }
 
   private runSearch(fen: string, options: EvaluateOptions): Promise<Evaluation> {
@@ -163,12 +154,10 @@ export class StockfishEngine {
         const best = parseBestMove(line)
         if (!best) return
         cleanup()
-        this.state = 'ready'
         resolve(buildEvaluation(latest, best, turn))
       }
       this.listeners.add(listener)
       this.searching = true
-      this.state = 'thinking'
       this.activeSearch = { reject, cleanup }
       this.send(`position fen ${fen}`)
       this.send(`go ${limit}`)

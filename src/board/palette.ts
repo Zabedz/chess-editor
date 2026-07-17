@@ -34,6 +34,9 @@ function createSwatch(color: Color, role: Role, drag: DragController): HTMLButto
   const button = document.createElement('button')
   button.type = 'button'
   button.className = 'swatch'
+  // Editing is pointer-only. The swatch is a drag source, so it stays out of
+  // the keyboard tab order.
+  button.tabIndex = -1
   button.setAttribute('aria-label', pieceLabel(color, role))
 
   const img = document.createElement('img')

@@ -94,8 +94,8 @@ export class App {
           this.panel.render({ kind: 'loading' })
           return
         }
-        // Show a searching state now so the panel matches the just-cleared
-        // highlight instead of lingering on the previous position's numbers.
+        // Show a searching state now so the panel tracks the just-cleared
+        // highlight while the next search runs.
         this.panel.render({ kind: 'searching', turn })
         this.timer = setTimeout(() => this.search(status.fen, turn, this.token), DEBOUNCE_MS)
         return
