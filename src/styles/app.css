@@ -128,7 +128,7 @@ header {
 
 /* Focus rings */
 .turn button:focus-visible,
-.btn:focus-visible,
+.tool:focus-visible,
 .icon-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -169,33 +169,11 @@ header {
   margin: 0 0 var(--sp-3);
 }
 
-/* Controls */
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  margin-top: var(--sp-4);
-}
-
-.btn {
-  font: inherit;
-  font-size: 14px;
-  text-align: center;
-  padding: 10px 12px;
-  border-radius: var(--r);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.12s;
-}
-
-.btn:hover {
-  background: var(--surface-3);
-}
-
-.btn--reset {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+.panel-hint {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: -6px 0 var(--sp-4);
+  line-height: 1.4;
 }
 
 /* Board column */
@@ -204,6 +182,43 @@ header {
   flex-direction: column;
   align-items: center;
   gap: var(--sp-3);
+}
+
+/* Board toolbar: board actions in one row under the board */
+.board-tools {
+  width: min(100%, 640px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.tool {
+  font: inherit;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.tool:hover {
+  background: var(--surface-3);
+}
+
+.tool.reset {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.tool svg {
+  width: 15px;
+  height: 15px;
 }
 
 .board-wrap {

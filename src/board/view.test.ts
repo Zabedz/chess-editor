@@ -57,4 +57,42 @@ describe('BoardView', () => {
     expect(classes(root, 'e3')?.contains('hl-path')).toBe(true)
     expect(classes(root, 'e4')?.contains('hl-to')).toBe(true)
   })
+
+  function order(root: HTMLElement): string[] {
+    return [...root.querySelectorAll<HTMLElement>('.square')].map((el) => el.dataset.square ?? '')
+  }
+
+  it('starts white-side-down: a8 first, h1 last', () => {
+    const { root } = mount()
+    const squares = order(root)
+    expect(squares[0]).toBe('a8')
+    expect(squares[63]).toBe('h1')
+  })
+
+  it('reverses the grid when flipped to black-side-down', () => {
+    const { root, view } = mount()
+    view.setOrientation('black')
+    const squares = order(root)
+    expect(squares.length).toBe(64)
+    expect(squares[0]).toBe('h1')
+    expect(squares[63]).toBe('a8')
+    expect(root.querySelectorAll('.square img.piece').length).toBe(32)
+  })
+
+  it('keeps a square its own colour across a flip', () => {
+    const { root, view } = mount()
+    const a1IsDark = classes(root, 'a1')?.contains('dark')
+    view.setOrientation('black')
+    expect(classes(root, 'a1')?.contains('dark')).toBe(a1IsDark)
+  })
+
+  it('re-applies the highlight after a flip', () => {
+    const { root, view } = mount()
+    view.setHighlight({ from: 'e1', to: 'e5', path: ['e2', 'e3', 'e4'] })
+    view.setOrientation('black')
+    expect(classes(root, 'e1')?.contains('hl-from')).toBe(true)
+    expect(classes(root, 'e5')?.contains('hl-to')).toBe(true)
+    expect(classes(root, 'e3')?.contains('hl-path')).toBe(true)
+    expect(root.querySelectorAll('.hl-from, .hl-to, .hl-path').length).toBe(5)
+  })
 })

@@ -1,7 +1,8 @@
 import { BoardModel } from './board/model.ts'
 import { BoardView } from './board/view.ts'
 import { DragController } from './board/dnd.ts'
-import { mountPalette } from './board/palette.ts'
+import { Palette } from './board/palette.ts'
+import type { Orientation } from './board/types.ts'
 import { classifyPosition } from './chess/status.ts'
 import { pathBetween } from './chess/geometry.ts'
 import { sanForMove } from './chess/notation.ts'
@@ -22,8 +23,10 @@ const DEBOUNCE_MS = 200
 export class App {
   private readonly model: BoardModel
   private readonly view: BoardView
+  private readonly palette: Palette
   private readonly panel: EvalPanel
   private readonly engine: StockfishEngine
+  private orientation: Orientation = 'white'
 
   // Bumped on every position or turn change; a search whose token is stale by
   // the time it resolves is discarded, so a superseded result never lands.
@@ -39,9 +42,16 @@ export class App {
 
     const drag = new DragController(this.model, refs.board)
     drag.attach()
-    mountPalette(refs.palette, drag)
+    this.palette = new Palette(refs.palette, drag)
     wireControls(refs, this.model)
     wireTheme(refs.themeButton)
+
+    refs.flipButton.addEventListener('click', () => this.flip())
+    window.addEventListener('keydown', (event) => {
+      // Bare f only. Let Cmd/Ctrl/Alt+F reach the browser (find, and the rest).
+      if (event.ctrlKey || event.metaKey || event.altKey) return
+      if (event.key.toLowerCase() === 'f' && !isTyping(event.target)) this.flip()
+    })
 
     this.panel.render({ kind: 'loading' })
     this.model.subscribe(() => this.recompute())
@@ -57,6 +67,14 @@ export class App {
         this.recompute()
       },
     )
+  }
+
+  /** Flips the board and the palette. Orientation is view-only; it does not
+      touch the position or the FEN. */
+  private flip(): void {
+    this.orientation = this.orientation === 'white' ? 'black' : 'white'
+    this.view.setOrientation(this.orientation)
+    this.palette.setOrientation(this.orientation)
   }
 
   private recompute(): void {
@@ -127,4 +145,9 @@ export class App {
         this.recompute()
       })
   }
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
 }

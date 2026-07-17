@@ -9,6 +9,7 @@ export interface ShellRefs {
   turnButtons: HTMLButtonElement[]
   clearButton: HTMLButtonElement
   resetButton: HTMLButtonElement
+  flipButton: HTMLButtonElement
   themeButton: HTMLButtonElement
 }
 
@@ -36,15 +37,20 @@ export function mountShell(root: HTMLElement): ShellRefs {
       <div class="app">
         <aside class="panel col-palette" aria-label="Piece palette">
           <h2 class="panel-title">Pieces</h2>
+          <p class="panel-hint">Drag onto the board. The order follows the board side.</p>
           <div class="palette-groups" id="palette"></div>
-          <div class="controls">
-            <button type="button" class="btn" data-action="clear">Clear board</button>
-            <button type="button" class="btn btn--reset" data-action="reset">Reset</button>
-          </div>
         </aside>
 
         <section class="col-board">
           <div class="board-wrap"><div class="board" id="board"></div></div>
+          <div class="board-tools">
+            <button type="button" class="tool" data-action="clear">Clear board</button>
+            <button type="button" class="tool reset" data-action="reset">Reset</button>
+            <button type="button" class="tool" data-action="flip" title="Flip board (f)" aria-label="Flip board">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 6l3-3 3 3"/><path d="M10 3v6"/><path d="M7 14l3 3 3-3"/><path d="M10 11v6"/></svg>
+              Flip
+            </button>
+          </div>
           <p class="board-caption">
             The engine's best move colours its <b>from</b> and <b>to</b> squares
             and the squares the piece <b>travels through</b>.
@@ -69,6 +75,7 @@ export function mountShell(root: HTMLElement): ShellRefs {
     ],
     clearButton: must(root.querySelector('button[data-action="clear"]'), 'clear button'),
     resetButton: must(root.querySelector('button[data-action="reset"]'), 'reset button'),
+    flipButton: must(root.querySelector('button[data-action="flip"]'), 'flip button'),
     themeButton: must(root.querySelector('button[data-theme-toggle]'), 'theme button'),
   }
 }

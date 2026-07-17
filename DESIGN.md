@@ -18,19 +18,19 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 +---------------------------------------------------------------+
 |  Header: title            [ White to move | Black to move ]   |
 +------------+-------------------------------+------------------+
-|  Palette   |                               |  Evaluation      |
-|  (white)   |          Chess board          |  - eval bar      |
-|  (black)   |          8x8, coords          |  - score         |
-|            |                               |  - best move     |
-|  [Clear]   |                               |  - depth/status  |
-|  [Reset]   |                               |                  |
+|  Palette   |          Chess board          |  Evaluation      |
+|  (top)     |          8x8, coords          |  - eval bar      |
+|  (bottom)  |                               |  - score         |
+|            |  [Clear] [Reset] [Flip]       |  - best move     |
+|            |                               |  - depth/status  |
 +------------+-------------------------------+------------------+
 ```
 
-- Left column, fixed 150 to 180px: the piece palette (white set, then black
-  set), and under it the two board controls, Clear board and Reset.
+- Left column, fixed 150 to 180px: the piece palette. The two colour groups sit
+  in board order, so the colour at the bottom of the board is the lower group.
 - Centre column, flexible: the board, sized to stay square, with file letters
-  and rank numbers.
+  and rank numbers, and a toolbar row under it with Clear board, Reset, and
+  Flip.
 - Right column, fixed 300 to 340px: the evaluation panel.
 
 The turn toggle sits in the header so it reads as a top-level mode that the
@@ -40,9 +40,9 @@ label so the two never drift apart in the user's eye.
 ### Responsive behaviour
 
 - `>= 1040px`: three columns as above.
-- `640px to 1039px`: header on top, then board centred, then the palette as a
-  horizontal wrapping strip, then the evaluation panel full width. Controls move
-  next to the palette strip.
+- `640px to 1039px`: header on top, then board with its toolbar centred, then
+  the palette as a horizontal wrapping strip, then the evaluation panel full
+  width.
 - `< 640px`: everything stacks in one column. Board takes the full width up to
   its max. Palette becomes a horizontal scrolling strip. Eval panel full width.
 
@@ -118,8 +118,10 @@ Evaluation sentiment:
 
 ### Board
 
-- 8x8 CSS grid, white at the bottom (rank 1 to 8 bottom to top, files a to h
-  left to right).
+- 8x8 CSS grid. White at the bottom by default (rank 1 to 8 bottom to top, files
+  a to h left to right); Flip swaps to Black at the bottom (rank 8 to 1, files h
+  to a). A square keeps its own light or dark colour in either orientation, so
+  the colour comes from the square name, not its grid position.
 - Each square is a `<div data-square="e4">` with a light or dark class.
 - File letters render in the bottom rank squares, rank numbers in the left file
   squares, in the corner, using the on-square coordinate colours above, small
@@ -132,7 +134,9 @@ Evaluation sentiment:
 ### Piece palette
 
 - Two labelled groups, White and Black, each with the six roles in reading order
-  king, queen, rook, bishop, knight, pawn.
+  king, queen, rook, bishop, knight, pawn. The group order follows the board
+  orientation: the colour at the bottom of the board is the lower group, so
+  Flip swaps the two groups to keep the palette aligned with the board.
 - Each swatch is the piece SVG on a `--surface-2` tile with a subtle border,
   sized like a board square at rest and scaling down on narrow screens.
 - Grab affordance: `cursor: grab`, and `grabbing` while dragging. A dragged
@@ -153,12 +157,19 @@ Uses the Pointer Events API with `setPointerCapture`, a floating ghost, and
 `elementFromPoint` on release to find the target square. `touch-action: none` on
 the board and palette so touch drags do not scroll the page.
 
-### Controls
+### Board toolbar
+
+A single row directly under the board, so the board actions stay next to the
+board they act on.
 
 - Clear board: empties every square. The eval panel then shows an idle empty
   state.
 - Reset: restores the standard starting position and sets the turn to White.
-- Both are `--surface-2` buttons with a visible focus ring and hover to
+- Flip: swaps the board orientation and, with it, the palette group order. It is
+  a view control, so it leaves the position, the side to move, and the FEN
+  untouched. Also bound to the `f` key when focus is not in a text field. Its
+  label pairs a small vertical two-way arrow icon with the word Flip.
+- All are `--surface-2` buttons with a visible focus ring and hover to
   `--surface-3`. Reset carries a slightly stronger outline since it is the
   common return action.
 
