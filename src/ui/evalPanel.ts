@@ -17,10 +17,15 @@ export type PanelState =
 // keeps a neutral colour and the subtext says "Equal".
 const EQUAL_CP = 30
 
-/** Renders the evaluation panel. It is a pure view: the orchestrator maps the
-    position and engine state to a PanelState and calls render(). */
+// How long the copy button reads "Copied" after a successful copy.
+const COPIED_LABEL_MS = 1200
+
+/** Renders the evaluation panel. The orchestrator maps the position and engine
+    state to a PanelState and calls render(); the panel also owns one action,
+    copying the FEN it displays. */
 export class EvalPanel {
   private readonly el: Record<string, HTMLElement>
+  private copyTimer: ReturnType<typeof setTimeout> | undefined
 
   constructor(root: HTMLElement) {
     root.classList.add('eval-panel')
@@ -53,12 +58,19 @@ export class EvalPanel {
       <div class="eval-status" data-el="status" role="status" aria-live="polite">
         <span class="led" data-el="led"></span><span data-el="statusText"></span>
       </div>
-      <div class="fen" data-el="fenRow" hidden><span class="fen-label">FEN</span> <span data-el="fen"></span></div>
+      <div class="fen" data-el="fenRow" hidden>
+        <div class="fen-head">
+          <span class="fen-label">FEN</span>
+          <button type="button" class="fen-copy" data-el="fenCopy">Copy</button>
+        </div>
+        <span class="fen-text" data-el="fen"></span>
+      </div>
     `
     this.el = {}
     for (const node of root.querySelectorAll<HTMLElement>('[data-el]')) {
       this.el[node.dataset.el as string] = node
     }
+    this.el.fenCopy.addEventListener('click', () => this.copyFen())
   }
 
   render(state: PanelState): void {
@@ -119,6 +131,22 @@ export class EvalPanel {
   setFen(fen: string | null): void {
     this.el.fenRow.hidden = fen === null
     if (fen) this.el.fen.textContent = fen
+  }
+
+  private copyFen(): void {
+    const fen = this.el.fen.textContent
+    if (!fen || !navigator.clipboard) return
+    // The write can be denied by clipboard permissions; the FEN stays on screen
+    // to copy by hand, so a rejection needs no separate error path.
+    navigator.clipboard.writeText(fen).then(() => this.flashCopied(), () => undefined)
+  }
+
+  private flashCopied(): void {
+    clearTimeout(this.copyTimer)
+    this.el.fenCopy.textContent = 'Copied'
+    this.copyTimer = setTimeout(() => {
+      this.el.fenCopy.textContent = 'Copy'
+    }, COPIED_LABEL_MS)
   }
 
   private showMessage(text: string): void {

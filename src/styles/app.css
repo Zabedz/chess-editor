@@ -258,6 +258,59 @@ header {
   margin: 0;
 }
 
+/* Position loader: paste a FEN or PGN to set the board */
+.position-loader {
+  width: min(100%, 640px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.loader-label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.loader-input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 9px 11px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.loader-input::placeholder {
+  color: var(--muted);
+}
+
+.loader-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.loader-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.loader-error {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--bad);
+  line-height: 1.4;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

@@ -13,6 +13,9 @@ export interface ShellRefs {
   resetButton: HTMLButtonElement
   flipButton: HTMLButtonElement
   themeButton: HTMLButtonElement
+  loadForm: HTMLFormElement
+  loadInput: HTMLTextAreaElement
+  loadError: HTMLElement
 }
 
 export function mountShell(root: HTMLElement): ShellRefs {
@@ -66,6 +69,14 @@ export function mountShell(root: HTMLElement): ShellRefs {
             The engine's best move colours its <b>from</b> and <b>to</b> squares
             and the squares the piece <b>travels through</b>.
           </p>
+          <form class="position-loader" data-el="loader" novalidate>
+            <label class="loader-label" for="position-input">Load a position</label>
+            <textarea id="position-input" class="loader-input" rows="2" spellcheck="false" autocomplete="off" placeholder="Paste a FEN or PGN"></textarea>
+            <div class="loader-row">
+              <button type="submit" class="tool loader-load">Load</button>
+              <p class="loader-error" data-el="loadError" role="alert"></p>
+            </div>
+          </form>
         </section>
 
         <aside class="panel col-eval" id="eval" aria-labelledby="eval-heading">
@@ -90,6 +101,9 @@ export function mountShell(root: HTMLElement): ShellRefs {
     resetButton: must(root.querySelector('button[data-action="reset"]'), 'reset button'),
     flipButton: must(root.querySelector('button[data-action="flip"]'), 'flip button'),
     themeButton: must(root.querySelector('button[data-theme-toggle]'), 'theme button'),
+    loadForm: must(root.querySelector('.position-loader'), 'load form'),
+    loadInput: must(root.querySelector('.loader-input'), 'load input'),
+    loadError: must(root.querySelector('[data-el="loadError"]'), 'load error'),
   }
 }
 

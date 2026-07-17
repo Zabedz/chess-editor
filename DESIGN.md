@@ -29,9 +29,11 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 - Left column, fixed 150 to 180px: the piece palette. The two colour groups sit
   in board order, so the colour at the bottom of the board is the lower group.
 - Centre column, flexible: the board, sized to stay square, with file letters
-  and rank numbers, and a toolbar row under it: the Back and Forward move
-  navigation, a divider, then Clear board, Reset, and Flip.
-- Right column, fixed 300 to 340px: the evaluation panel.
+  and rank numbers; a toolbar row under it (Back and Forward move navigation, a
+  divider, then Clear board, Reset, and Flip); and a load box for pasting a FEN
+  or PGN.
+- Right column, fixed 300 to 340px: the evaluation panel, which also shows the
+  current FEN with a Copy button.
 
 The turn toggle sits in the header so it reads as a top-level mode that the
 evaluation follows. The eval panel repeats the current side to move as a small
@@ -183,6 +185,25 @@ board they act on. It has two groups split by a thin divider: move navigation
 - All are `--surface-2` buttons with a visible focus ring and hover to
   `--surface-3`. A disabled button drops to 40% opacity. Reset carries a
   slightly stronger outline since it is the common return action.
+
+### Load a position
+
+Under the board, a labelled box takes a FEN or a PGN so a position can be set
+without dragging every piece.
+
+- A two-row monospace text field with the placeholder "Paste a FEN or PGN" and a
+  Load button. Load also fires on Cmd/Ctrl+Enter; a plain Enter adds a newline,
+  so a multi-line PGN can be pasted or typed.
+- A FEN is recognised by the slashes in its first field and read for placement
+  and side to move. Anything else is played out as a PGN to its final position.
+  Castling and en passant are dropped, matching how the editor serialises its
+  own FEN.
+- A load replaces the whole position and is a normal edit, so Back undoes it.
+- Invalid input leaves the board untouched and shows an inline error that names
+  the problem (for example, the side to move is not w or b). The error clears on
+  the next keystroke.
+- The eval panel's FEN readout has a Copy button, so the round trip of copy,
+  edit, and load works from the app alone.
 
 ### Turn toggle
 
