@@ -47,8 +47,8 @@ export function mountShell(root: HTMLElement): ShellRefs {
           </p>
         </section>
 
-        <aside class="panel col-eval" id="eval" aria-label="Evaluation">
-          <h2 class="panel-title">Evaluation</h2>
+        <aside class="panel col-eval" id="eval" aria-labelledby="eval-heading">
+          <h2 class="panel-title" id="eval-heading">Evaluation</h2>
           <p class="eval-idle">Place pieces to see the engine's best move.</p>
         </aside>
       </div>

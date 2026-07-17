@@ -6,6 +6,7 @@ export type PanelState =
   | { kind: 'loading' }
   | { kind: 'error' }
   | { kind: 'empty' }
+  | { kind: 'searching'; turn: Color }
   | { kind: 'illegal'; reason: string; turn: Color }
   | { kind: 'checkmate'; winner: Color; turn: Color }
   | { kind: 'stalemate'; turn: Color }
@@ -25,7 +26,7 @@ export class EvalPanel {
     root.classList.add('eval-panel')
     root.innerHTML = `
       <div class="eval-head">
-        <h2 class="panel-title">Evaluation</h2>
+        <h2 class="panel-title" id="eval-heading">Evaluation</h2>
         <span class="stm" data-el="stm"></span>
       </div>
       <div class="eval-detail" data-el="detail">
@@ -76,6 +77,10 @@ export class EvalPanel {
       case 'empty':
         this.showMessage("Place pieces to see the engine's best move.")
         this.setStatus('idle', 'Waiting for a position')
+        break
+      case 'searching':
+        this.showMessage('Searching for the best move.')
+        this.setStatus('thinking', 'Searching')
         break
       case 'illegal':
         this.showMessage(state.reason)

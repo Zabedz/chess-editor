@@ -1,19 +1,5 @@
-import { test, expect, type Locator, type Page } from '@playwright/test'
-
-async function center(locator: Locator): Promise<{ x: number; y: number }> {
-  const box = await locator.boundingBox()
-  if (!box) throw new Error('element has no bounding box')
-  return { x: box.x + box.width / 2, y: box.y + box.height / 2 }
-}
-
-async function dragTo(page: Page, from: Locator, to: { x: number; y: number }): Promise<void> {
-  const start = await center(from)
-  await page.mouse.move(start.x, start.y)
-  await page.mouse.down()
-  await page.mouse.move((start.x + to.x) / 2, (start.y + to.y) / 2, { steps: 4 })
-  await page.mouse.move(to.x, to.y, { steps: 4 })
-  await page.mouse.up()
-}
+import { test, expect } from '@playwright/test'
+import { belowBoard, center, dragTo } from './helpers.ts'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
@@ -38,9 +24,7 @@ test('moves a piece between squares', async ({ page }) => {
 
 test('removes a piece dragged off the board', async ({ page }) => {
   const a2 = page.locator('[data-square="a2"]')
-  const box = await page.locator('.board').boundingBox()
-  if (!box) throw new Error('no board box')
-  await dragTo(page, a2, { x: box.x + box.width / 2, y: box.y + box.height + 40 })
+  await dragTo(page, a2, await belowBoard(page))
   await expect(a2).toHaveAttribute('data-piece', '')
 })
 
@@ -74,9 +58,7 @@ test('dropping a palette piece off the board changes nothing', async ({ page }) 
   const occupied = '.board [data-piece]:not([data-piece=""])'
   const before = await page.locator(occupied).count()
   const swatch = page.getByRole('button', { name: 'white queen' })
-  const box = await page.locator('.board').boundingBox()
-  if (!box) throw new Error('no board box')
-  await dragTo(page, swatch, { x: box.x + box.width / 2, y: box.y + box.height + 40 })
+  await dragTo(page, swatch, await belowBoard(page))
   await expect(page.locator('.drag-ghost')).toHaveCount(0)
   expect(await page.locator(occupied).count()).toBe(before)
 })
@@ -119,8 +101,6 @@ test('placing and removing pieces does not flip the turn', async ({ page }) => {
   await expect(white).toHaveAttribute('aria-pressed', 'true')
 
   // Delete a piece by dragging it off the board.
-  const box = await page.locator('.board').boundingBox()
-  if (!box) throw new Error('no board box')
-  await dragTo(page, e4, { x: box.x + box.width / 2, y: box.y + box.height + 40 })
+  await dragTo(page, e4, await belowBoard(page))
   await expect(white).toHaveAttribute('aria-pressed', 'true')
 })
