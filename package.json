@@ -2,6 +2,7 @@
   "name": "chess-engine",
   "version": "0.1.0",
   "description": "Chess position editor with Stockfish evaluation",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {

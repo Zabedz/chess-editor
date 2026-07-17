@@ -113,7 +113,13 @@ focusable and operable, with visible focus rings and a reduced-motion mode.
 Piece editing is pointer based (drag and drop); moving pieces with the keyboard
 alone is not supported.
 
-## Licenses of bundled work
+## License
+
+This project's own source is under the MIT License (see `LICENSE`): free to use,
+modify, and distribute, as long as the copyright and permission notice go with
+it, and with no warranty or liability on the author.
+
+The bundled third-party work keeps its own licenses:
 
 - `chess.js` is under the BSD-2-Clause license.
 - The Stockfish engine (the `stockfish` package, Stockfish.js by Nathan Rugg) is
