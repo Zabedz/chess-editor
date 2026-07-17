@@ -116,4 +116,107 @@ describe('BoardModel', () => {
     model.put('e1', { color: 'b', role: 'k' })
     expect(listener).toHaveBeenCalledTimes(1)
   })
+
+  it('has nothing to undo until an edit happens', () => {
+    const model = new BoardModel()
+    expect(model.canUndo()).toBe(false)
+    model.move('e2', 'e4')
+    expect(model.canUndo()).toBe(true)
+  })
+
+  it('undoes a move, restoring the pieces and the turn', () => {
+    const model = new BoardModel()
+    model.move('e2', 'e4')
+    expect(model.getTurn()).toBe('b')
+    model.undo()
+    expect(model.get('e2')).toEqual({ color: 'w', role: 'p' })
+    expect(model.get('e4')).toBeUndefined()
+    expect(model.getTurn()).toBe('w')
+    expect(model.canUndo()).toBe(false)
+  })
+
+  it('undoes a spawned and a removed piece', () => {
+    const model = new BoardModel()
+    model.clear()
+    model.put('d4', { color: 'w', role: 'n' })
+    model.undo()
+    expect(model.get('d4')).toBeUndefined()
+
+    model.remove('a1')
+    expect(model.get('a1')).toBeUndefined()
+    model.undo()
+    expect(model.get('a1')).toEqual({ color: 'w', role: 'r' })
+  })
+
+  it('undoes clear, reset, and setPosition', () => {
+    const model = new BoardModel()
+    model.clear()
+    model.undo()
+    expect(model.getPieces().size).toBe(32)
+
+    model.setTurn('b')
+    model.reset()
+    expect(model.getTurn()).toBe('w')
+    model.undo()
+    expect(model.getTurn()).toBe('b')
+
+    model.setPosition(new Map([['h4', { color: 'b', role: 'q' }]]), 'b')
+    expect(model.getPieces().size).toBe(1)
+    model.undo()
+    expect(model.getPieces().size).toBe(32)
+  })
+
+  it('steps back through several edits in order', () => {
+    const model = new BoardModel()
+    model.clear()
+    model.put('a1', { color: 'w', role: 'r' })
+    model.put('h8', { color: 'b', role: 'r' })
+    model.undo()
+    expect(model.get('h8')).toBeUndefined()
+    expect(model.get('a1')).toEqual({ color: 'w', role: 'r' })
+    model.undo()
+    expect(model.get('a1')).toBeUndefined()
+    expect(model.getPieces().size).toBe(0)
+    model.undo()
+    expect(model.getPieces().size).toBe(32)
+    expect(model.canUndo()).toBe(false)
+  })
+
+  it('does not record the turn toggle as its own undo step', () => {
+    const model = new BoardModel()
+    model.setTurn('b')
+    expect(model.canUndo()).toBe(false)
+    model.undo()
+    expect(model.getTurn()).toBe('b')
+  })
+
+  it('does not record a reset that is already at the start position', () => {
+    const model = new BoardModel()
+    const listener = vi.fn()
+    model.subscribe(listener)
+    model.reset()
+    expect(model.canUndo()).toBe(false)
+    expect(listener).not.toHaveBeenCalled()
+  })
+
+  it('does nothing and does not notify when there is nothing to undo', () => {
+    const model = new BoardModel()
+    const listener = vi.fn()
+    model.subscribe(listener)
+    model.undo()
+    expect(listener).not.toHaveBeenCalled()
+    expect(model.getPieces().size).toBe(32)
+  })
+
+  it('promotes on move and restores the pawn on undo', () => {
+    const model = new BoardModel()
+    model.clear()
+    model.put('a7', { color: 'w', role: 'p' })
+    model.move('a7', 'a8', 'q')
+    expect(model.get('a8')).toEqual({ color: 'w', role: 'q' })
+    expect(model.get('a7')).toBeUndefined()
+    model.undo()
+    expect(model.get('a7')).toEqual({ color: 'w', role: 'p' })
+    expect(model.get('a8')).toBeUndefined()
+  })
 })

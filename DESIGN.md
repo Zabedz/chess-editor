@@ -21,7 +21,7 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 |  Palette   |          Chess board          |  Evaluation      |
 |  (top)     |          8x8, coords          |  - eval bar      |
 |  (bottom)  |                               |  - score         |
-|            |  [Clear] [Reset] [Flip]       |  - best move     |
+|            | [Back][Fwd] | [Clr][Rst][Flp]|  - best move     |
 |            |                               |  - depth/status  |
 +------------+-------------------------------+------------------+
 ```
@@ -29,8 +29,8 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 - Left column, fixed 150 to 180px: the piece palette. The two colour groups sit
   in board order, so the colour at the bottom of the board is the lower group.
 - Centre column, flexible: the board, sized to stay square, with file letters
-  and rank numbers, and a toolbar row under it with Clear board, Reset, and
-  Flip.
+  and rank numbers, and a toolbar row under it: the Back and Forward move
+  navigation, a divider, then Clear board, Reset, and Flip.
 - Right column, fixed 300 to 340px: the evaluation panel.
 
 The turn toggle sits in the header so it reads as a top-level mode that the
@@ -160,8 +160,17 @@ the board and palette so touch drags do not scroll the page.
 ### Board toolbar
 
 A single row directly under the board, so the board actions stay next to the
-board they act on.
+board they act on. It has two groups split by a thin divider: move navigation
+(Back, Forward) on the left, board setup (Clear, Reset, Flip) on the right.
 
+- Back: undoes the last edit, whether a piece was spawned, removed, or moved.
+  The turn toggle is not an edit, so it is not undone. Disabled when the history
+  is empty. Bound to the Left arrow key. Its label is a left chevron and Back.
+- Forward: plays the engine's suggested move, which flips the turn and starts a
+  fresh search on the new position. A promotion in the suggested move lands the
+  promoted piece. Disabled when there is no suggested move (empty, illegal,
+  terminal, or still searching). Bound to the Right arrow key. Its label is
+  Forward and a right chevron.
 - Clear board: empties every square. The eval panel then shows an idle empty
   state.
 - Reset: restores the standard starting position and sets the turn to White.
@@ -169,9 +178,11 @@ board they act on.
   a view control, so it leaves the position, the side to move, and the FEN
   untouched. Also bound to the `f` key when focus is not in a text field. Its
   label pairs a small vertical two-way arrow icon with the word Flip.
+- The keyboard shortcuts (Left, Right, `f`) fire only on a bare key press, so
+  browser and text-field shortcuts keep working.
 - All are `--surface-2` buttons with a visible focus ring and hover to
-  `--surface-3`. Reset carries a slightly stronger outline since it is the
-  common return action.
+  `--surface-3`. A disabled button drops to 40% opacity. Reset carries a
+  slightly stronger outline since it is the common return action.
 
 ### Turn toggle
 

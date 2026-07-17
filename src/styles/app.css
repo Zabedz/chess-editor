@@ -208,8 +208,13 @@ header {
   transition: background 0.12s;
 }
 
-.tool:hover {
+.tool:hover:not(:disabled) {
   background: var(--surface-3);
+}
+
+.tool:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .tool.reset {
@@ -219,6 +224,15 @@ header {
 .tool svg {
   width: 15px;
   height: 15px;
+}
+
+/* Splits the move-navigation pair from the board-setup buttons. */
+.tool-sep {
+  width: 1px;
+  align-self: stretch;
+  min-height: 20px;
+  background: var(--border);
+  margin: 0 var(--sp-1);
 }
 
 .board-wrap {

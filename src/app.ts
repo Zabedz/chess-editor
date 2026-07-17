@@ -6,7 +6,7 @@ import type { Orientation } from './board/types.ts'
 import { classifyPosition } from './chess/status.ts'
 import { pathBetween } from './chess/geometry.ts'
 import { sanForMove } from './chess/notation.ts'
-import type { Color, Square } from './chess/types.ts'
+import type { Color, Role, Square } from './chess/types.ts'
 import { StockfishEngine } from './engine/stockfish.ts'
 import { EvalPanel } from './ui/evalPanel.ts'
 import { wireControls } from './ui/controls.ts'
@@ -26,7 +26,13 @@ export class App {
   private readonly palette: Palette
   private readonly panel: EvalPanel
   private readonly engine: StockfishEngine
+  private readonly back: HTMLButtonElement
+  private readonly forward: HTMLButtonElement
   private orientation: Orientation = 'white'
+
+  // The engine's current best move, or null when there is none to play. Back
+  // undoes the last edit; Forward plays this move.
+  private bestMove: { from: Square; to: Square; promotion?: Role } | null = null
 
   // Bumped on every position or turn change; a search whose token is stale by
   // the time it resolves is discarded, so a superseded result never lands.
@@ -46,14 +52,15 @@ export class App {
     wireControls(refs, this.model)
     wireTheme(refs.themeButton)
 
+    this.back = refs.backButton
+    this.forward = refs.forwardButton
+    this.back.addEventListener('click', () => this.model.undo())
+    this.forward.addEventListener('click', () => this.playBest())
     refs.flipButton.addEventListener('click', () => this.flip())
-    window.addEventListener('keydown', (event) => {
-      // Bare f only. Let Cmd/Ctrl/Alt+F reach the browser (find, and the rest).
-      if (event.ctrlKey || event.metaKey || event.altKey) return
-      if (event.key.toLowerCase() === 'f' && !isTyping(event.target)) this.flip()
-    })
+    window.addEventListener('keydown', (event) => this.onKey(event))
 
     this.panel.render({ kind: 'loading' })
+    this.syncNav()
     this.model.subscribe(() => this.recompute())
 
     this.engine.whenReady().then(
@@ -77,11 +84,47 @@ export class App {
     this.palette.setOrientation(this.orientation)
   }
 
+  private onKey(event: KeyboardEvent): void {
+    // Bare keys only, and not while typing, so browser and text-field shortcuts
+    // keep working.
+    if (event.ctrlKey || event.metaKey || event.altKey || isTyping(event.target)) return
+    if (event.key.toLowerCase() === 'f') {
+      this.flip()
+    } else if (event.key === 'ArrowLeft' && this.model.canUndo()) {
+      event.preventDefault()
+      this.model.undo()
+    } else if (event.key === 'ArrowRight' && this.bestMove) {
+      event.preventDefault()
+      this.playBest()
+    }
+  }
+
+  /** Plays the engine's suggested move, which flips the turn and re-runs the
+      search on the new position. */
+  private playBest(): void {
+    if (!this.bestMove) return
+    const { from, to, promotion } = this.bestMove
+    this.model.move(from, to, promotion)
+  }
+
+  /** The single place bestMove changes, so the Back/Forward enabled state stays
+      in step with it. */
+  private setBestMove(value: { from: Square; to: Square; promotion?: Role } | null): void {
+    this.bestMove = value
+    this.syncNav()
+  }
+
+  private syncNav(): void {
+    this.back.disabled = !this.model.canUndo()
+    this.forward.disabled = this.bestMove === null
+  }
+
   private recompute(): void {
     this.token++
     clearTimeout(this.timer)
     this.engine.stop()
     this.view.clearHighlight()
+    this.setBestMove(null)
 
     const turn = this.model.getTurn()
     const status = classifyPosition(this.model.getPieces(), turn)
@@ -136,6 +179,9 @@ export class App {
         if (evaluation.bestMove) {
           const from = evaluation.bestMove.slice(0, 2) as Square
           const to = evaluation.bestMove.slice(2, 4) as Square
+          const promotion =
+            evaluation.bestMove.length > 4 ? (evaluation.bestMove[4] as Role) : undefined
+          this.setBestMove({ from, to, promotion })
           this.view.setHighlight({ from, to, path: pathBetween(from, to) })
         }
       })

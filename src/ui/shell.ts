@@ -7,6 +7,8 @@ export interface ShellRefs {
   board: HTMLElement
   evalPanel: HTMLElement
   turnButtons: HTMLButtonElement[]
+  backButton: HTMLButtonElement
+  forwardButton: HTMLButtonElement
   clearButton: HTMLButtonElement
   resetButton: HTMLButtonElement
   flipButton: HTMLButtonElement
@@ -44,6 +46,15 @@ export function mountShell(root: HTMLElement): ShellRefs {
         <section class="col-board">
           <div class="board-wrap"><div class="board" id="board"></div></div>
           <div class="board-tools">
+            <button type="button" class="tool" data-action="back" title="Undo the last edit (Left arrow)" aria-label="Undo the last edit" disabled>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5l-5 5 5 5"/></svg>
+              Back
+            </button>
+            <button type="button" class="tool" data-action="forward" title="Play the suggested move (Right arrow)" aria-label="Play the suggested move" disabled>
+              Forward
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+            </button>
+            <span class="tool-sep" aria-hidden="true"></span>
             <button type="button" class="tool" data-action="clear">Clear board</button>
             <button type="button" class="tool reset" data-action="reset">Reset</button>
             <button type="button" class="tool" data-action="flip" title="Flip board (f)" aria-label="Flip board">
@@ -73,6 +84,8 @@ export function mountShell(root: HTMLElement): ShellRefs {
       must(root.querySelector('button[data-turn="w"]'), 'turn white button'),
       must(root.querySelector('button[data-turn="b"]'), 'turn black button'),
     ],
+    backButton: must(root.querySelector('button[data-action="back"]'), 'back button'),
+    forwardButton: must(root.querySelector('button[data-action="forward"]'), 'forward button'),
     clearButton: must(root.querySelector('button[data-action="clear"]'), 'clear button'),
     resetButton: must(root.querySelector('button[data-action="reset"]'), 'reset button'),
     flipButton: must(root.querySelector('button[data-action="flip"]'), 'flip button'),
