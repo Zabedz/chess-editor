@@ -43,12 +43,15 @@ export class BoardModel {
     if (this.pieces.delete(square)) this.emit()
   }
 
+  /** Relocates a piece and flips the side to move, so playing a move alternates
+      the turn. */
   move(from: Square, to: Square): void {
     if (from === to) return
     const piece = this.pieces.get(from)
     if (!piece) return
     this.pieces.delete(from)
     this.pieces.set(to, piece)
+    this.turn = this.turn === 'w' ? 'b' : 'w'
     this.emit()
   }
 

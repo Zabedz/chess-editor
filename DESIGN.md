@@ -161,8 +161,15 @@ the board and palette so touch drags do not scroll the page.
 
 - A two-segment control in the header, White to move and Black to move. The
   active segment fills with `--accent` and reads as pressed (aria-pressed). It
-  starts on White.
-- Changing the turn re-runs the evaluation for the same position.
+  starts on White, and the starting position and Reset are White to move.
+- Moving a piece from one square to another flips the side to move, so moves
+  alternate the turn (White, then Black, then White, and so on) whatever colour
+  was moved. Placing a piece from the palette or dragging one off the board to
+  delete it is a position edit and keeps the current side to move.
+- The user can override the side to move at any time by clicking the toggle;
+  later moves alternate from whatever was set.
+- Changing the turn, by a move or the toggle, re-runs the evaluation for the new
+  side.
 
 ### Evaluation panel
 
@@ -209,9 +216,9 @@ Panel states:
 
 ## Why these choices
 
-- Tile colouring for the best move, rather than an arrow, matches what the task
-  asks for and what chessnextmove.com does, and it stays readable on a small
-  board without extra SVG overlay plumbing.
+- Colouring the from and to tiles for the best move matches what the task asks
+  for and what chessnextmove.com does, and it stays readable on a small board
+  with no SVG overlay plumbing.
 - A green board with the cburnett piece set is the visual most chess players
   already recognise, which lowers the learning cost of the editor.
 - Dark chrome around a bright board keeps attention on the board and the score,

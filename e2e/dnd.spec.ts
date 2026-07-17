@@ -90,3 +90,37 @@ test('right-clicking a piece does not start a drag', async ({ page }) => {
   await expect(page.locator('.drag-ghost')).toHaveCount(0)
   await expect(a2).toHaveAttribute('data-piece', 'wp')
 })
+
+test('a board move flips the turn to the other side', async ({ page }) => {
+  const white = page.getByRole('button', { name: 'White to move' })
+  const black = page.getByRole('button', { name: 'Black to move' })
+  await expect(white).toHaveAttribute('aria-pressed', 'true')
+
+  const a2 = page.locator('[data-square="a2"]')
+  const a4 = page.locator('[data-square="a4"]')
+  await dragTo(page, a2, await center(a4))
+  await expect(black).toHaveAttribute('aria-pressed', 'true')
+
+  // A second move alternates the turn back to White.
+  const b7 = page.locator('[data-square="b7"]')
+  const b5 = page.locator('[data-square="b5"]')
+  await dragTo(page, b7, await center(b5))
+  await expect(white).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('placing and removing pieces does not flip the turn', async ({ page }) => {
+  const white = page.getByRole('button', { name: 'White to move' })
+  await expect(white).toHaveAttribute('aria-pressed', 'true')
+
+  // Spawn a piece from the palette.
+  const swatch = page.getByRole('button', { name: 'white queen' })
+  const e4 = page.locator('[data-square="e4"]')
+  await dragTo(page, swatch, await center(e4))
+  await expect(white).toHaveAttribute('aria-pressed', 'true')
+
+  // Delete a piece by dragging it off the board.
+  const box = await page.locator('.board').boundingBox()
+  if (!box) throw new Error('no board box')
+  await dragTo(page, e4, { x: box.x + box.width / 2, y: box.y + box.height + 40 })
+  await expect(white).toHaveAttribute('aria-pressed', 'true')
+})

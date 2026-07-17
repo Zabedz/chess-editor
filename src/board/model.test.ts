@@ -47,6 +47,45 @@ describe('BoardModel', () => {
     expect(model.get('a8')).toEqual({ color: 'w', role: 'r' })
   })
 
+  it('flips the side to move after each move, regardless of colour', () => {
+    const model = new BoardModel()
+    expect(model.getTurn()).toBe('w')
+    model.move('e2', 'e4')
+    expect(model.getTurn()).toBe('b')
+    model.move('e7', 'e5')
+    expect(model.getTurn()).toBe('w')
+    model.move('g1', 'f3')
+    expect(model.getTurn()).toBe('b')
+  })
+
+  it('does not flip the turn when placing or removing a piece', () => {
+    const model = new BoardModel()
+    expect(model.getTurn()).toBe('w')
+    model.put('e4', { color: 'b', role: 'q' })
+    expect(model.getTurn()).toBe('w')
+    model.remove('e4')
+    expect(model.getTurn()).toBe('w')
+    model.clear()
+    expect(model.getTurn()).toBe('w')
+  })
+
+  it('alternates from a manually overridden turn', () => {
+    const model = new BoardModel()
+    model.setTurn('b')
+    model.move('e2', 'e4')
+    expect(model.getTurn()).toBe('w')
+  })
+
+  it('does not flip or notify when a piece is dropped on its own square', () => {
+    const model = new BoardModel()
+    const listener = vi.fn()
+    model.subscribe(listener)
+    model.move('a2', 'a2')
+    expect(model.getTurn()).toBe('w')
+    expect(model.get('a2')).toEqual({ color: 'w', role: 'p' })
+    expect(listener).not.toHaveBeenCalled()
+  })
+
   it('notifies subscribers on change and stops after unsubscribe', () => {
     const model = new BoardModel()
     const listener = vi.fn()
