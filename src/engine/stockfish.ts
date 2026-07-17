@@ -25,10 +25,17 @@ export interface Evaluation {
   pv: string[]
 }
 
+export interface SearchProgress {
+  depth: number
+  whiteCp: number | null
+  whiteMate: number | null
+  text: string
+}
+
 export interface EvaluateOptions {
   depth?: number
   movetime?: number
-  onInfo?: (update: { depth: number; text: string }) => void
+  onInfo?: (progress: SearchProgress) => void
 }
 
 type LineListener = (line: string) => void
@@ -134,7 +141,12 @@ export class StockfishEngine {
         const info = parseInfo(line)
         if (info) {
           latest = info
-          options.onInfo?.({ depth: info.depth, text: formatScore(info.score, turn) })
+          options.onInfo?.({
+            depth: info.depth,
+            whiteCp: whiteCentipawns(info.score, turn),
+            whiteMate: whiteMate(info.score, turn),
+            text: formatScore(info.score, turn),
+          })
           return
         }
         const best = parseBestMove(line)
