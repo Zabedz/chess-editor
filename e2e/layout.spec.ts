@@ -16,7 +16,7 @@ for (const viewport of REFERENCE_VIEWPORTS) {
     await page.goto('/')
 
     // Load a real position so the eval panel reaches its tallest state (score,
-    // best move, legend, and FEN all shown), the worst case for the budget.
+    // best move, and FEN all shown), the worst case for the budget.
     await page.locator('.loader-input').fill('r3k2r/pp3ppp/2n5/8/4P3/5N2/PP3PPP/R3K2R b - - 0 1')
     await page.getByRole('button', { name: 'Load' }).click()
     await expect(page.locator('.eval-status')).toHaveAttribute('data-tone', 'ready', {

@@ -48,11 +48,6 @@ export class EvalPanel {
           </div>
           <div class="row"><span class="k">Depth</span><span class="v" data-el="depth"></span></div>
         </div>
-        <div class="legend">
-          <div class="legend-item"><span class="chip chip-from"></span>Move from</div>
-          <div class="legend-item"><span class="chip chip-path"></span>Travels through</div>
-          <div class="legend-item"><span class="chip chip-to"></span>Move to</div>
-        </div>
       </div>
       <p class="eval-message" data-el="message" aria-live="polite"></p>
       <div class="eval-status" data-el="status" role="status" aria-live="polite">

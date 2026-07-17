@@ -69,10 +69,6 @@ export function mountShell(root: HTMLElement): ShellRefs {
               Flip
             </button>
           </div>
-          <p class="board-caption">
-            The engine's best move colours its <b>from</b> and <b>to</b> squares
-            and the squares the piece <b>travels through</b>.
-          </p>
         </section>
 
         <div class="col-eval">

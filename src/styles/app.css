@@ -194,11 +194,11 @@ header {
    than the board it sits under. --board-v-reserve is the vertical space the
    page chrome takes around the board, so capping the board at 100vh minus that
    reserve keeps the three-column view inside the viewport at 100% zoom (DDR-01).
-   The 252px is the sum of ~22 top pad + ~44 header + ~22 header margin + ~40
-   toolbar + ~54 caption + 2x ~12 gaps + 24 bottom pad, rounded up for a small
-   safety margin. Re-measure it if the header, toolbar, or caption height moves. */
+   The 188px is the sum of ~22 top pad + ~44 header + ~22 header margin + ~40
+   toolbar + ~12 gap + 24 bottom pad, rounded up for a small safety margin.
+   Re-measure it if the header or toolbar height moves. */
 .col-board {
-  --board-v-reserve: 252px;
+  --board-v-reserve: 188px;
   --board-size: min(100%, calc(100vh - var(--board-v-reserve)), 640px);
   display: flex;
   flex-direction: column;
@@ -270,18 +270,6 @@ header {
 .board-wrap {
   container-type: inline-size;
   width: var(--board-size);
-}
-
-.board-caption {
-  font-size: 12.5px;
-  color: var(--muted);
-  text-align: center;
-  max-width: 44ch;
-}
-
-.board-caption b {
-  color: var(--text);
-  font-weight: 600;
 }
 
 .eval-idle {

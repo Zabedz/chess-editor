@@ -22,7 +22,7 @@ Desktop (>= 1040px) is a three-column row with the board in the middle:
 |  (top)     |          8x8, coords          |  - eval bar      |
 |  (bottom)  |                               |  - score         |
 |            |  [ Back ][ Forward ]|[C][R][F]|  - best move     |
-|            |            caption            |  - depth/status  |
+|            |                               |  - depth/status  |
 |            |                               +------------------+
 |            |                               |  Load a position |
 |            |                               |  [ FEN or PGN ]  |
@@ -54,9 +54,9 @@ label so the two never drift apart in the user's eye.
   load box, full width.
 
 Board sizing: `min(100%, calc(100vh - var(--board-v-reserve)), 640px)`, always
-square, centred in its column. The reserve (about 252px) is the vertical space
-the header, paddings, toolbar, caption, and gaps take, so the board shrinks
-before the column overflows the viewport (DDR-01). The board and the toolbar
+square, centred in its column. The reserve (about 188px) is the vertical space
+the header, paddings, toolbar, and gaps take, so the board shrinks before the
+column overflows the viewport (DDR-01). The board and the toolbar
 under it share one `--board-size` token, so the toolbar is always exactly as
 wide as the board and never drifts off-centre.
 
@@ -330,8 +330,9 @@ localStorage, so the choices survive a reload.
 - Squares and palette swatches are focusable and operable, with aria labels
   naming the piece and square.
 - The turn toggle and control buttons have clear focus rings using `--accent`.
-- Colour is not the only signal: the destination ring and the text labels back
-  up the tile colours for the suggested move.
+- Colour is not the only signal: the destination ring and the best-move notation
+  (which names the from and to squares) back up the tile colours for the
+  suggested move.
 - Contrast of text on surfaces meets WCAG AA.
 
 ## Why these choices
