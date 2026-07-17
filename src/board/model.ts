@@ -65,16 +65,24 @@ export class BoardModel {
   }
 
   /** Relocates a piece and flips the side to move, so playing a move alternates
-      the turn. Pass a promotion role to land a different piece on the target,
-      as when the engine's best move promotes a pawn; a drag omits it. */
+      the turn. A king's two-square home-rank move toward a friendly corner rook,
+      with the squares it crosses empty, castles: the rook hops to the king's
+      far side in the same undoable step. Pass a promotion role to land a
+      different piece on the target, as when the engine's best move promotes a
+      pawn; a drag omits it. */
   move(from: Square, to: Square, promotion?: Role): void {
     if (from === to) return
     const piece = this.pieces.get(from)
     if (!piece) return
+    const rookHop = castleRookHop(piece, from, to, this.pieces)
     const capture = this.pieces.has(to)
     this.record()
     this.pieces.delete(from)
     this.pieces.set(to, promotion ? { color: piece.color, role: promotion } : piece)
+    if (rookHop) {
+      this.pieces.delete(rookHop.from)
+      this.pieces.set(rookHop.to, { color: piece.color, role: 'r' })
+    }
     this.turn = this.turn === 'w' ? 'b' : 'w'
     this.emit({ kind: 'move', capture })
   }
@@ -136,4 +144,37 @@ export class BoardModel {
   private emit(change: Change): void {
     for (const listener of this.listeners) listener(change)
   }
+}
+
+/** The rook's move for a castle, or null when the king move is not one. It is a
+    castle when the king starts on its home square (e1 or e8) and moves two files
+    to g or c, a friendly rook stands on the matching corner, and the squares the
+    king and rook cross are empty. Returning null for every other king move keeps
+    ordinary moves and free-form edits untouched. Standard chess only: the home
+    squares and corners are fixed, so Chess960 castles are read as plain moves. */
+function castleRookHop(
+  king: Piece,
+  from: Square,
+  to: Square,
+  pieces: ReadonlyMap<Square, Piece>,
+): { from: Square; to: Square } | null {
+  if (king.role !== 'k') return null
+  const rank = king.color === 'w' ? '1' : '8'
+  if (from !== `e${rank}`) return null
+
+  const empty = (file: string): boolean => !pieces.has(`${file}${rank}` as Square)
+  const rookAt = (file: string): boolean =>
+    isRook(pieces.get(`${file}${rank}` as Square), king.color)
+
+  if (to === `g${rank}` && rookAt('h') && empty('f') && empty('g')) {
+    return { from: `h${rank}` as Square, to: `f${rank}` as Square }
+  }
+  if (to === `c${rank}` && rookAt('a') && empty('b') && empty('c') && empty('d')) {
+    return { from: `a${rank}` as Square, to: `d${rank}` as Square }
+  }
+  return null
+}
+
+function isRook(piece: Piece | undefined, color: Color): boolean {
+  return piece !== undefined && piece.role === 'r' && piece.color === color
 }

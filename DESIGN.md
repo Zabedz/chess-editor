@@ -192,6 +192,14 @@ Uses the Pointer Events API with `setPointerCapture`, a floating ghost, and
 `elementFromPoint` on release to find the target square. `touch-action: none` on
 the board and palette so touch drags do not scroll the page.
 
+Castling is the one move where a single drag relocates two pieces. Dragging the
+king its two squares along the home rank toward a friendly corner rook, with the
+squares between them empty (e1 to g1 or c1, e8 to g8 or c8), moves the rook to
+the king's far side in the same step, so it undoes as one. This is the same
+gesture lichess and chess.com use, so it needs no extra control. Any other king
+move, including a two-square move with no corner rook or a blocked path, stays a
+plain one-piece move, so free-form editing is unaffected.
+
 ### Board toolbar
 
 A single row directly under the board, so the board actions stay next to the
@@ -206,9 +214,10 @@ keep their natural width.
   is empty. Bound to the Left arrow key. Its label is a left chevron and Back.
 - Forward: plays the engine's suggested move, which flips the turn and starts a
   fresh search on the new position. A promotion in the suggested move lands the
-  promoted piece. Disabled when there is no suggested move (empty, illegal,
-  terminal, or still searching). Bound to the Right arrow key. Its label is
-  Forward and a right chevron.
+  promoted piece, and a castle (the engine emits it as the king's two-square
+  move, such as e1g1) moves the rook with the king. Disabled when there is no
+  suggested move (empty, illegal, terminal, or still searching). Bound to the
+  Right arrow key. Its label is Forward and a right chevron.
 - Clear board: empties every square. The eval panel then shows an idle empty
   state.
 - Reset: restores the standard starting position and sets the turn to White.
